@@ -23,6 +23,7 @@ En concreto, el contenido de este repositorio está enfocado a conocer qué resu
 *   [Escenarios en SIMANFOR](https://github.com/simanfor/escenarios)
 *   [Introducción a SIMANFOR](https://github.com/simanfor/introduccion)
 *   [Inventarios en SIMANFOR](https://github.com/simanfor/inventarios)
+*   [Manual de uso de SIMANFOR](https://github.com/simanfor/manual)
 *   [Modelos en SIMANFOR](https://github.com/simanfor/modelos)
 *   [Publicaciones acerca de SIMANFOR](https://github.com/simanfor/publicaciones)
 *   [Web de SIMANFOR](https://github.com/simanfor/web)
