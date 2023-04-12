@@ -127,6 +127,10 @@ df$n_scnr <- substr(df$Nombre_fichero_origen, 22, 23)
 
 # caso 3: estoy utilizando resultados de ejemplo de Ps-no_maderables obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 df$n_scnr <- substr(df$Nombre_fichero_origen, 1, 4)
+
+# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+df$n_scnr <- substr(df$Nombre_fichero_origen, 0, 24)
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 # eliminamos campos vacíos
@@ -599,6 +603,10 @@ final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 22, 23)
 
 # caso 3: estoy utilizando resultados de ejemplo de Ps-no_maderables obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 1, 4)
+
+# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 0, 24)
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 # calculamos ahora el promedio, por escenario, de volumen y área basimétrica acumulada

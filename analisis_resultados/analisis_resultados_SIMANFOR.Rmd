@@ -2,7 +2,7 @@
 title: "analisis_resultados_SIMANFOR"
 author: "Aitor Vázquez Veloso"
 date: "2023-02-14"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -137,6 +137,9 @@ df$n_scnr <- substr(df$Nombre_fichero_origen, 22, 23)
 
 # caso 3: estoy utilizando resultados de ejemplo de Ps-no_maderables obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 df$n_scnr <- substr(df$Nombre_fichero_origen, 1, 4)
+
+# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+df$n_scnr <- substr(df$Nombre_fichero_origen, 0, 24)
 ```
 
 Ya casi lo tienes, por último, vamos a eliminar campos de información vacíos
@@ -617,6 +620,9 @@ final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 22, 23)
 
 # caso 3: estoy utilizando resultados de ejemplo de Ps-no_maderables obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 1, 4)
+
+# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 0, 24)
 ```
 
 ```{r}
