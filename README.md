@@ -24,7 +24,7 @@ Este repositorio está enfocado en conocer qué resultados se obtienen de las si
 * :bar_chart: **Ps-no_maderables**: resultados obtenidos para parcelas de *Pinus sylvestris* de Cataluña obtenidas del [Inventario Forestal Nacional](https://www.miteco.gob.es/es/biodiversidad/temas/inventarios-nacionales/inventario-forestal-nacional/default.aspx).
 * :floppy_disk: **ejemplo_resultado.xlsx**: archivo de ejemplo para consultar el tipo de resultados que se pueden obtener de SIMANFOR  
 * :book: :es: **SIMANFOR_resultados.pdf**: documento explicativo de cada apartado de los archivos de resultados de SIMANFOR en español
-* :book: 🇬🇧 **SIMANFOR_resultados_EN.pdf**: documento explicativo de cada apartado de los archivos de resultados de SIMANFOR en inglés
+* :book: 🇬🇧 **english/SIMANFOR_results.pdf**: documento explicativo de cada apartado de los archivos de resultados de SIMANFOR en inglés
 
 ---
 

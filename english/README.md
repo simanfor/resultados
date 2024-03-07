@@ -24,7 +24,7 @@ This repository is focused on understanding the results obtained from simulation
 * :bar_chart: **Ps-no_maderables**: Results obtained for *Pinus sylvestris* plots in Catalonia obtained from the [National Forest Inventory](https://www.miteco.gob.es/es/biodiversidad/temas/inventarios-nacionales/inventario-forestal-nacional/default.aspx).
 * :floppy_disk: **ejemplo_resultado.xlsx**: Example file to see the type of results that can be obtained from SIMANFOR
 * :book: :es: **SIMANFOR_resultados.pdf**: Explanatory document for each section of the SIMANFOR results files in Spanish
-* :book: 🇬🇧 **SIMANFOR_resultados_EN.pdf**: Explanatory document for each section of the SIMANFOR results files in English
+* :book: 🇬🇧 **english/SIMANFOR_results.pdf**: Explanatory document for each section of the SIMANFOR results files in English
 
 ---
 
