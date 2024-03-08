@@ -19,7 +19,7 @@ Este repositorio está enfocado en conocer qué resultados se obtienen de las si
 
 ## :scroll: Contenido
 
-* :computer: **analisis_resultados**: carpeta que contiene un script de R preparado para poder hacer algunos gráficos que muestran la evolución de la masa forestal y una comparación de la cantidad de madera acumulada (incluida la extraída) bajo distintos escenarios selvícolas. 
+* :computer: **analisis_resultados**: carpeta que contiene un script de R preparado para poder hacer algunos gráficos que muestran la evolución de la masa forestal y una comparación de la cantidad de madera acumulada (incluida la extraída) bajo distintos escenarios selvícolas. Puedes visualizar los resultados de este análisis en el archivo *.html* que se encuentra en la misma carpeta.
 * :bar_chart: **Ppinaster-Del_Rio_2006**: resultados obtenidos para las 5 calidades de estación de *Pinus pinaster* de Castilla y León propuestas por [Del Río et al., 2006](https://www.researchgate.net/publication/265520003_Manual_de_gestion_para_masas_procedentes_de_repoblacion_de_Pinus_pinaster_Ait_Pinus_sylvestris_L_y_Pinus_nigra_Arn_en_Castilla_y_Leon)
 * :bar_chart: **Ps-no_maderables**: resultados obtenidos para parcelas de *Pinus sylvestris* de Cataluña obtenidas del [Inventario Forestal Nacional](https://www.miteco.gob.es/es/biodiversidad/temas/inventarios-nacionales/inventario-forestal-nacional/default.aspx).
 * :floppy_disk: **ejemplo_resultado.xlsx**: archivo de ejemplo para consultar el tipo de resultados que se pueden obtener de SIMANFOR  
