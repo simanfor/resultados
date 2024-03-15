@@ -100,7 +100,7 @@ todas ellas y extraer la información de los archivos en formato .xlsx.
 # introduce la ruta de la carpeta en la que tienes alojados los resultados de SIMANFOR
 # OJO! no olvides que en R las rutas se escriben con '/' y no con '\' como en Windows
 # por ejemplo, my_path <- 'C:/Usuarios/mi_usuario/Descargas'
-my_path <- 'C:/Users/aitor/Downloads/Ps-no_maderables'
+my_path <- '/home/aitor/Downloads/resultados/Ps-no_maderables'
 ```
 
 En este apartado vamos acceder a todos los archivos de resultados de SIMANFOR, extrayendo su información Para ello, 
@@ -202,7 +202,11 @@ entonces modifica el código:
 # obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 df$n_scnr <- substr(df$Nombre_fichero_origen, 1, 4)
 
-# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+# caso 4: estoy utilizando resultados de ejemplo de alguna carpeta dentro de Qpyrenaica_masas_irregulares
+# obtenidos de https://github.com/simanfor/resultados/tree/main/Qpyrenaica_masas_irregulares
+#df$n_scnr <- substr(df$Nombre_fichero_origen, 4, 11)
+
+# caso 5: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
 #df$n_scnr <- substr(df$Nombre_fichero_origen, 0, 24)
 ```
 
@@ -778,7 +782,11 @@ de opciones. Si ninguna satisface tu caso, entonces modifica el código:
 # caso 3: estoy utilizando resultados de ejemplo de Ps-no_maderables obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 1, 4)
 
-# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+# caso 4: estoy utilizando resultados de ejemplo de alguna carpeta dentro de Qpyrenaica_masas_irregulares
+# obtenidos de https://github.com/simanfor/resultados/tree/main/Qpyrenaica_masas_irregulares
+#final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 4, 11)
+
+# caso 5: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
 #final_plots$Escenario <- substr(final_plots$Nombre_fichero_origen, 0, 24)
 ```
 
@@ -979,7 +987,11 @@ new_df_3$T <- redondeo(new_df_3$T, 5)
 # caso 3: estoy utilizando resultados de ejemplo de Ps-no_maderables obtenidos de https://github.com/simanfor/resultados/tree/main/Ps-no_maderables
 new_df_3$n_scnr <- substr(new_df_3$Nombre_fichero_origen, 1, 4)
 
-# caso 4: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
+# caso 4: estoy utilizando resultados de ejemplo de alguna carpeta dentro de Qpyrenaica_masas_irregulares
+# obtenidos de https://github.com/simanfor/resultados/tree/main/Qpyrenaica_masas_irregulares
+#new_df_3$n_scnr <- substr(new_df_3$Nombre_fichero_origen, 4, 11)
+
+# caso 5: queremos como identificador de escenario el código de un determinado output de SIMANFOR web
 #new_df_3$n_scnr <- substr(new_df_3$Nombre_fichero_origen, 0, 24)
 
 #-#-#-#-#-#-#-#-#-#-
