@@ -42,6 +42,23 @@ Este repositorio está enfocado en conocer qué resultados se obtienen de las si
 
 ---
 
+## :movie_camera: Vídeos introductorios al uso de SIMANFOR
+
+- :scroll: Lista de reproducción: [SIMANFOR: Sistema de apoyo para la simulación de alternativas de manejo forestal sostenible](https://youtube.com/playlist?list=PLsdzTKpJZZa7vn5zGpn07-bd0Nce-fMhJ&feature=shared)
+    - :arrow_forward: [Introducción a SIMANFOR](https://youtu.be/Y8pWcPdHsMY?feature=shared)
+    - :arrow_forward: [Documentación de SIMANFOR en GitHub](https://youtu.be/i4AXBrm4PqI?feature=shared)
+    - :arrow_forward: [Primera toma de contacto con la web de SIMANFOR](https://youtu.be/SlfTKkf37MA?feature=shared)
+    - :arrow_forward: [Explorando inventarios para utilizar en SIMANFOR](https://youtu.be/_SOIN--Tllw?feature=shared)
+    - :arrow_forward: [Mi primera simulación en SIMANFOR](https://youtu.be/kCRNgIsfAn8?feature=shared)
+    - :arrow_forward: [Explorando los resultados de SIMANFOR](https://youtu.be/bfUqAEd2i94?feature=shared)
+    - :arrow_forward: [Visualizar resultados de SIMANFOR en R](https://youtu.be/AzU9Z989MeE?feature=shared)
+    - :arrow_forward: [Aplicando un mismo escenario selvícola a parcelas de diferente edad en SIMANFOR](https://youtu.be/vH7HI3d5hPU?feature=shared)
+    - :arrow_forward: [Simulaciones utilizando cortas por especies para masas mixtas en SIMANFOR](https://youtu.be/jNKvKxR7YvE?feature=shared)
+    - :arrow_forward: [Simulaciones utilizando cortas con árboles de futuro en SIMANFOR](https://youtu.be/dJvYjD4c0ss?feature=shared)
+    - :arrow_forward: [Simulaciones con modelos estáticos en SIMANFOR](https://youtu.be/b11iagnqRCA?feature=shared)
+
+---
+
 ## :floppy_disk: Repositorios de trabajos donde se ha utilizado SIMANFOR
 
 * :bar_chart: [Repositorio con simulaciones para masas mixtas](https://github.com/iuFOR-QuantitativeForestry/COMFOR.NFI) del proyecto [COMFOR-SUDOE]

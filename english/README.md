@@ -41,6 +41,23 @@ This repository is focused on understanding the results obtained from simulation
 
 ---
 
+## :movie_camera: Explanatory videos for using SIMANFOR *(Spanish)*
+
+- :scroll: Playlist: [SIMANFOR: Sistema de apoyo para la simulación de alternativas de manejo forestal sostenible](https://youtube.com/playlist?list=PLsdzTKpJZZa7vn5zGpn07-bd0Nce-fMhJ&feature=shared)
+    - :arrow_forward: [Introducción a SIMANFOR](https://youtu.be/Y8pWcPdHsMY?feature=shared)
+    - :arrow_forward: [Documentación de SIMANFOR en GitHub](https://youtu.be/i4AXBrm4PqI?feature=shared)
+    - :arrow_forward: [Primera toma de contacto con la web de SIMANFOR](https://youtu.be/SlfTKkf37MA?feature=shared)
+    - :arrow_forward: [Explorando inventarios para utilizar en SIMANFOR](https://youtu.be/_SOIN--Tllw?feature=shared)
+    - :arrow_forward: [Mi primera simulación en SIMANFOR](https://youtu.be/kCRNgIsfAn8?feature=shared)
+    - :arrow_forward: [Explorando los resultados de SIMANFOR](https://youtu.be/bfUqAEd2i94?feature=shared)
+    - :arrow_forward: [Visualizar resultados de SIMANFOR en R](https://youtu.be/AzU9Z989MeE?feature=shared)
+    - :arrow_forward: [Aplicando un mismo escenario selvícola a parcelas de diferente edad en SIMANFOR](https://youtu.be/vH7HI3d5hPU?feature=shared)
+    - :arrow_forward: [Simulaciones utilizando cortas por especies para masas mixtas en SIMANFOR](https://youtu.be/jNKvKxR7YvE?feature=shared)
+    - :arrow_forward: [Simulaciones utilizando cortas con árboles de futuro en SIMANFOR](https://youtu.be/dJvYjD4c0ss?feature=shared)
+    - :arrow_forward: [Simulaciones con modelos estáticos en SIMANFOR](https://youtu.be/b11iagnqRCA?feature=shared)
+
+---
+
 ## :floppy_disk: Repositories of works where SIMANFOR has been used
 
 * :bar_chart: [Repository with simulations for mixed stands](https://github.com/iuFOR-QuantitativeForestry/COMFOR.NFI) from the [COMFOR-SUDOE](https://www.comfor-sudoe.eu/es/) project
@@ -67,11 +84,11 @@ The use of SIMANFOR should be cited as follows:
 
 🇬🇧 **Reference in english:**
 
-*SIMANFOR (**year**). Support system for the simulation of sustainable forest management alternatives. Accesed **day** **month** **year** in https://www.simanfor.es*
+*SIMANFOR (**year**). Support system for the simulation of sustainable forest management alternatives. Accessed **day** **month** **year** in https://www.simanfor.es*
 
 ***Example***:
 
-*SIMANFOR (2024). Support system for the simulation of sustainable forest management alternatives. Accesed 01 January 2024 in https://www.simanfor.es*
+*SIMANFOR (2024). Support system for the simulation of sustainable forest management alternatives. Accessed 01 January 2024 in https://www.simanfor.es*
 
 Additionally, the use of each model included in the simulator must be cited according to the proposed citation format for each of them, which you can consult in their respective [datasheets](https://github.com/simanfor/modelos).
 
