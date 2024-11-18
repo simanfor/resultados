@@ -74,31 +74,18 @@ This repository is focused on understanding the results obtained from simulation
 
 The use of SIMANFOR should be cited as follows:
 
-:es: **Referencia en español:**
+Bravo, F., Ordóñez, C., Vázquez-Veloso, A., & Michalakopoulos, S. (2025). SIMANFOR cloud Decision Support System: Structure, content, and applications. Ecological Modelling, 499, 110912. https://doi.org/10.1016/j.ecolmodel.2024.110912
 
-*SIMANFOR (**año**). Sistema de apoyo para la simulación de alternativas de manejo forestal sostenible. Recuperado el **día** de **mes** de **año** en https://www.simanfor.es*
-
-***Ejemplo***:
-
-*SIMANFOR (2024). Sistema de apoyo para la simulación de alternativas de manejo forestal sostenible. Recuperado el 01 de enero de 2024 en https://www.simanfor.es*
-
-🇬🇧 **Reference in english:**
-
-*SIMANFOR (**year**). Support system for the simulation of sustainable forest management alternatives. Accessed **day** **month** **year** in https://www.simanfor.es*
-
-***Example***:
-
-*SIMANFOR (2024). Support system for the simulation of sustainable forest management alternatives. Accessed 01 January 2024 in https://www.simanfor.es*
-
-Additionally, the use of each model included in the simulator must be cited according to the proposed citation format for each of them, which you can consult in their respective [datasheets](https://github.com/simanfor/modelos).
+In addition, you can cite the models used and the articles where the original equations have been published, have a look at the [sheet](https://github.com/simanfor/modelos) of the corresponding model for more details.
 
 ---
 
 ## :computer: Contributors list
 
-[![](https://github.com/aitorvv.png?size=50)](https://github.com/aitorvv)
-[![](https://github.com/acristo.png?size=50)](https://github.com/acristo)
 [![](https://github.com/Felipe-Bravo.png?size=50)](https://github.com/Felipe-Bravo)
+[![](https://github.com/acristo.png?size=50)](https://github.com/acristo)
+[![](https://github.com/aitorvv.png?size=50)](https://github.com/aitorvv)
+[![](https://github.com/spirosmichalak.png?size=50)](https://github.com/spirosmichalak)
 
 ---
 

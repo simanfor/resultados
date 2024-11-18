@@ -76,31 +76,18 @@ Este repositorio está enfocado en conocer qué resultados se obtienen de las si
 
 El uso de SIMANFOR debe citarse de la siguiente forma:
 
-:es: **Referencia en español:**
+Bravo, F., Ordóñez, C., Vázquez-Veloso, A., & Michalakopoulos, S. (2025). SIMANFOR cloud Decision Support System: Structure, content, and applications. Ecological Modelling, 499, 110912. https://doi.org/10.1016/j.ecolmodel.2024.110912
 
-*SIMANFOR (**año**). Sistema de apoyo para la simulación de alternativas de manejo forestal sostenible. Recuperado el **día** de **mes** de **año** en https://www.simanfor.es*
-
-***Ejemplo***:
-
-*SIMANFOR (2024). Sistema de apoyo para la simulación de alternativas de manejo forestal sostenible. Recuperado el 01 de enero de 2024 en https://www.simanfor.es*
-
-🇬🇧 **Reference in english:**
-
-*SIMANFOR (**year**). Support system for the simulation of sustainable forest management alternatives. Accesed **day** **month** **year** in https://www.simanfor.es*
-
-***Example***:
-
-*SIMANFOR (2024). Support system for the simulation of sustainable forest management alternatives. Accesed 01 January 2024 in https://www.simanfor.es*
-
-Además, debe citarse el uso cada modelo incluido en el simulador de acuerdo con la forma de cita propuesta para cada uno de ellos, que puedes consultar en su correspondiente [ficha](https://github.com/simanfor/modelos).
+Además, puedes citar los modelos de utilizados y los artículos donde han sido publicadas las ecuaciones originales, echa un vistazo a la [ficha](https://github.com/simanfor/modelos) del modelo correspondiente para más detalles.
 
 ---
 
 ## :computer: Lista de contribuidores
 
-[![](https://github.com/aitorvv.png?size=50)](https://github.com/aitorvv)
-[![](https://github.com/acristo.png?size=50)](https://github.com/acristo)
 [![](https://github.com/Felipe-Bravo.png?size=50)](https://github.com/Felipe-Bravo)
+[![](https://github.com/acristo.png?size=50)](https://github.com/acristo)
+[![](https://github.com/aitorvv.png?size=50)](https://github.com/aitorvv)
+[![](https://github.com/spirosmichalak.png?size=50)](https://github.com/spirosmichalak)
 
 ---
 
