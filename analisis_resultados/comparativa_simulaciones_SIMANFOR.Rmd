@@ -1,0 +1,166 @@
+---
+title: "Comparativa de simulaciones de SIMANFOR"
+author: "Aitor Vázquez Veloso"
+date: "2025-02-12"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+## Introducción
+
+En este archivo se presentan los pasos básicos para el análisis de resultados de simulaciones en SIMANFOR.
+
+Este código necesita la intervención del usuario para definir algunas variables antes de ejecutarlo.
+Por otro lado, los archivos resultantes de las simulaciones de SIMANFOR deben:
+
+-   estar descomprimidos
+-   estar dentro de una carpeta principal que englobe todos los resultados
+-   cada grupo de simulaciones debe estar en una carpeta separada dentro de la carpeta principal 
+
+*Nota: los grupos de simulaciones se refieren a los casos que queremos comparar con este análisis.* 
+*Por lo general compararemos distintos escenarios de gestión forestal, pero también podríamos comparar parcelas con* 
+*distintas densidades iniciales, calidades de estación, zonas de estudio, proporción de especies... simuladas bajo un* 
+*mismo escenario de gestión. En la imagen de a continuación podemos ver (1) un caso de estudio donde se ha aplicado la* 
+*misma gestión a masas con distinta productividad, y (2) un caso de estudio donde se ha aplicado distinta gestión.* 
+*Puedes encontrar estos archivos en el repositorio de [resultados de SIMANFOR](https://github.com/simanfor/resultados)*
+
+*Por cierto, en estas carpetas puedes poner un nombre que represente el grupo de simulaciones que contiene, como por *
+*ejemplo una gestión forestal concreta, una especie de interés, una zona de estudio, etc.*
+*Este nombre será el que se muestre en la leyenda de los gráficos, por lo que es importante que sea descriptivo y corto.*
+
+![Figura 1. Estructura de ejemplo para las carpetas con resultados](./recursos/carpetas.png) 
+
+
+## Instalación y carga de paquetes
+
+Para que este código funcione correctamente, es necesario mantener el archivo `functions.r` en la misma carpeta que este 
+archivo. Este archivo contiene funciones necesarias para la ejecución de este código.
+
+```{r message=FALSE}
+source('functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+```
+
+Sería necesario establecer nuestro directorio de trabajo, pero con los archivos *.Rmd* no es necesario, ya que toman
+como directorio de trabajo la carpeta donde se encuentran.
+
+
+## Configuración inicial de variables
+
+Ahora es tu turno. Configura las siguientes variables para que el código funcione correctamente.
+Comencemos con la ruta de los archivos de simulación. Sustituye la ruta que aparece a continuación por la ruta de la
+carpeta principal donde se encuentran tus archivos (recuerda, esta debe tener subcarpetas con los resultados de cada
+grupo de simulaciones). El código se mostrará los archivos que se encuentran en esa carpeta.
+
+*Nota: si estás trabajando en Windows, recuerda cambiar la orientación de las barras a esta:* ***/***
+
+```{r}
+simulations_path <- '/home/aitor/Downloads/Ps-no_maderables' 
+list.files(simulations_path, full.names = TRUE)
+```
+
+Continuemos configurando las siguientes variables:
+
+-   *lang* = **Idioma de los resultados obtenidos de SIMANFOR:** `es` (Español) o `en` (Inglés)
+-   *projection_time* = **Tiempo de proyección del modelo:** Ver [documentación del modelo](https://github.com/simanfor/modelos) 
+o consultar dato en la [página web de SIMANFOR](https://www.simanfor.es/models)
+-   *save* = **Quieres guardar los gráficos que vas a crear?** `si` o `no`
+-   *output_path* = **Ruta de salida de gráficos:** Carpeta donde se guardarán los gráficos generados (por defecto 
+es la carpeta de trabajo)
+
+```{r}
+lang <- "es"
+projection_time <- 5  
+save <- "si"  
+output_path <- getwd()  
+```
+
+
+### Carga de resultados
+
+El siguiente paso es cargar los datos de las simulaciones. Para ello, usaremos la función `load_plot_data` que se
+encuentra en el archivo `functions.r`. Tus datos se cargarán en un data frame llamado `plots`. Una vez cargados,
+podremos graficar los resultados, pero antes, sería interesante echar un vistazo a los datos para conocer qué variables 
+tenemos disponibles para graficar y qué valores toman. Recuerda que en los archivos de resultados de SIMANFOR tienes una
+hoja llamada "Metadatos" donde puedes consultar el significado de cada variable y las unidades en las que se expresan.
+Te dejo por aquí una serie de comandos que puedes utilizar para explorar tus datos:
+
+- **dim(plots)**: Número de filas y columnas
+- **str(plots)**: Estructura de los datos (tipos de variables)
+- **glimpse(plots)**: Similar a str(), pero más compacto
+- **names(plots)**: Nombres de las variables
+- **head(plots, 10)**: Primeras 10 filas del dataframe
+- **tail(plots, 10)**: Últimas 10 filas
+- **summary(plots)**: Estadísticas descriptivas generales
+
+```{r}
+plots <- load_plot_data(simulations_path, lang)
+```
+
+
+### Creación de gráficos
+
+Genial, ya hemos dado los pasos necesarios para comenzar a graficar los resultados de las simulaciones.
+Para ello vamos a utilizar la función `graph_selector` que se encuentra en el archivo `functions.r`. Esta función
+nos permitirá seleccionar el tipo de gráfico que queremos crear y personalizarlo según nuestras necesidades.
+Para ello, debemos definir los siguientes argumentos:
+
+- **df:** Data frame con los resultados (por defecto, `plots`)
+- **projection_time:** Tiempo de proyección del modelo usado en las simulaciones (lo hemos definido anteriormente)
+- **lang:** Idioma de los resultados (lo hemos definido anteriormente)
+- **save:** Guardar los gráficos (lo hemos definido anteriormente)
+- **output_path:** Ruta donde se guardarán los gráficos (lo hemos definido anteriormente)
+- **graph_type:** Devuelve un gráfico donde se muestra la evolución de la variable seleccionada a lo largo de la simulación para:
+    
+  * `"en pie"`: masa que permanece en pie y no es extraída mediante cortas
+  * `"acumulado"`: la suma de la masa en pie y la masa extraída mediante cortas
+  * `"en pie + acumulado"`: ambos resultados en un mismo gráfico
+  
+- **x_axis_var:** Variable a representar en el eje X, a elegir entre: `T` (edad de la masa), `Anho` (año para el 
+que se han hecho las predicciones), o `Edad_de_escenario` (tiempo simulado, teniendo tu inventario inicial el valor 0). 
+*Nota: revisa tus datos para saber qué variables tienes disponibles (por defecto se utiliza `T`). Ten en cuenta que*
+*los resultados serán diferentes dependiendo de los valores iniciales de estas variables en cada parcela utilizada, *
+*puesto que se calculará el valor promedio de todas ellas*
+- **y_axis_var:** Variable numérica a graficar en el eje Y
+- **title:** Título del gráfico (no lo incluyas si no quieres título)
+- **subtitle:** Subtítulo del gráfico (no lo incluyas si no quieres subtítulo)
+- **x:** Etiqueta del eje X (no lo incluyas si no quieres etiqueta)
+- **y:** Etiqueta del eje Y (no lo incluyas si no quieres etiqueta)
+
+*Nota: los gráficos guardados en tu ordenador están reescalados para evitar cortes en el texto y mejorar la presentación*
+
+
+#### Gráfico de ejemplo: evolución de la densidad
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "en pie", x_axis_var = "T", y_axis_var = "N", 
+               title = "Evolución de la densidad durante el periodo de la simulación", 
+               subtitle = "Masas de Pinus sylvestris",
+               x = "Edad de la masa (años)", y = "Densidad (pies/ha)")
+```
+
+#### Gráfico de ejemplo: evolución de la biomasa total acumulada
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "acumulado", x_axis_var = "T", y_axis_var = "WT", 
+               title = "Evolución de la biomasa total acumulada durante el periodo de la simulación",
+               subtitle = "Masas de Pinus sylvestris",
+               x = "Edad de la masa (años)", y = "Biomasa total acumulada (t/ha)")
+```
+
+#### Gráfico de ejemplo: evolución del volumen con corteza (en pie y acumulado)
+
+```{r} 
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "en pie + acumulado", x_axis_var = "T", y_axis_var = "V_con_corteza", 
+               title = "Evolución del volumen con corteza durante el periodo de la simulación", 
+               subtitle = "Masas de Pinus sylvestris", 
+               x = "Edad de la masa (años)", y = "Volumen con corteza (m³/ha)")
+```

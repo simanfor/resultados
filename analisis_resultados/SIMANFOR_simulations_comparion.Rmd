@@ -1,0 +1,164 @@
+---
+title: "Comparison of SIMANFOR simulations"
+author: "Aitor Vázquez Veloso"
+date: "2025-02-12"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+## Introduction
+
+This document presents the basic steps for analyzing simulation results in SIMANFOR.
+
+This code requires user intervention to define some variables before execution.
+Additionally, the resulting files from SIMANFOR simulations must:
+
+-   Be uncompressed
+-   Be inside a main folder that contains all the results
+-   Each simulation group must be in a separate folder within the main folder
+
+*Note: Simulation groups refer to the cases we want to compare with this analysis.* 
+*In general, we will compare different forest management scenarios, but we could also compare plots with* 
+*different initial densities, site qualities, study areas, species proportions... simulated under the same* 
+*management scenario. The image below shows (1) a case study where the same management was applied to stands with* 
+*different productivity, and (2) a case study where different management was applied.* 
+*You can find these files in the [SIMANFOR results repository](https://github.com/simanfor/resultados)*
+
+*By the way, in these folders you can give a name that represents the group of simulations it contains, *
+*such as a specific forest management, a species of interest, a study area, etc. *
+*This name will be displayed in the legend of the graphs, so it is important that it is descriptive and short.*
+
+
+![Figure 1. Example of the folders organization structure](./recursos/carpetas.png) 
+
+
+
+## Installation and loading of packages
+
+For this code to function correctly, it is necessary to keep the `functions.r` file in the same folder as this 
+document. This file contains functions necessary for executing this code.
+
+```{r message=FALSE}
+source('functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+```
+
+Setting the working directory would normally be required, but for *.Rmd* files, it is not necessary, as they use 
+the folder they are located in as the working directory.
+
+## Initial variable configuration
+
+Now it’s your turn. Configure the following variables for the code to work correctly.
+Let’s start with the path to the simulation files. Replace the path below with the path to the 
+main folder where your files are located (remember, this should contain subfolders with the results of each 
+simulation group). The code will display the files found in that folder.
+
+*Note: If you are working on Windows, remember to change the slash orientation to:* ***/***
+
+```{r}
+simulations_path <- '/home/aitor/Downloads/Ps-no_maderables' 
+list.files(simulations_path, full.names = TRUE)
+```
+
+Next, configure the following variables:
+
+-   *lang* = **Language of the results obtained from SIMANFOR:** `es` (Spanish) or `en` (English)
+-   *projection_time* = **Model projection time:** See [model documentation](https://github.com/simanfor/modelos) 
+or check the [SIMANFOR website](https://www.simanfor.es/models)
+-   *save* = **Do you want to save the graphs you will create?** `yes` or `no`
+-   *output_path* = **Graph output path:** Folder where generated graphs will be saved (default is the working directory)
+
+```{r}
+lang <- "es"
+projection_time <- 5  
+save <- "yes"  
+output_path <- getwd()  
+```
+
+### Loading Simulation Results
+
+The next step is to load the simulation data. For this, we will use the `load_plot_data` function found in 
+the `functions.r` file. Your data will be loaded into a data frame called `plots`. Once loaded, 
+we will be able to create graphs, but first, it would be useful to explore the data to see which variables 
+are available for graphing and what values they take. Remember that the SIMANFOR result files contain a 
+"Metadata" sheet where you can check the meaning of each variable and their respective units.
+Here are some commands you can use to explore your data:
+
+- **dim(plots)**: Number of rows and columns
+- **str(plots)**: Data structure (variable types)
+- **glimpse(plots)**: Similar to str(), but more compact
+- **names(plots)**: Variable names
+- **head(plots, 10)**: First 10 rows of the dataframe
+- **tail(plots, 10)**: Last 10 rows of the dataframe
+- **summary(plots)**: General descriptive statistics
+
+```{r}
+plots <- load_plot_data(simulations_path, lang)
+```
+
+### Creating graphs
+
+Great, we have taken the necessary steps to start graphing the simulation results.
+For this, we will use the `graph_selector` function located in the `functions.r` file. This function
+allows us to select the type of graph we want to create and customize it to our needs.
+To do this, we need to define the following arguments:
+
+- **df:** Data frame with the results (default: `plots`)
+- **projection_time:** Model projection time used in the simulations (defined earlier)
+- **lang:** Language of the results (defined earlier)
+- **save:** Save the graphs (defined earlier)
+- **output_path:** Path where the graphs will be saved (defined earlier)
+- **graph_type:** Returns a graph showing the evolution of the selected variable throughout the simulation for:
+    
+  * `"standing"`: Biomass that remains standing and is not harvested
+  * `"accumulated"`: The sum of standing biomass and biomass harvested
+  * `"standing + accumulated"`: Both results in the same graph
+  
+- **x_axis_var:** Variable to be represented on the X-axis, chosen from: `T` (stand age), `Year` (year for which 
+predictions were made), or `Scenario_age` (simulated time, with your initial inventory having a value of 0).  
+*Note: Check your data to see which variables are available (by default, `T` is used). Keep in mind that the results *
+*will vary depending on the initial values of these variables in each plot used, as the average value of all of them *
+*will be calculated.*
+- **y_axis_var:** Variable to be represented on the Y-axis
+- **title:** Graph title (omit if not needed)
+- **subtitle:** Graph subtitle (omit if not needed)
+- **x:** X-axis label (omit if not needed)
+- **y:** Y-axis label (omit if not needed)
+
+*Note: The graphs saved on your computer are re scaled to prevent text from being cut off and to improve presentation.*
+
+#### Example graph: density evolution
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Density evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Density (trees/ha)")
+```
+
+#### Example graph: total accumulated biomass evolution
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "accumulated", x_axis_var = "T", y_axis_var = "WT",
+               title = "Total accumulated biomass evolution during the simulation period",
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Total accumulated biomass (t/ha)")
+```
+
+
+#### Example graph: volume over bark evolution (standing + accumulated)
+
+```{r} 
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "V_con_corteza", 
+               title = "Volume over bark evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands", 
+               x = "Stand age (years)", y = "Volume over bark (m³/ha)")
+```
