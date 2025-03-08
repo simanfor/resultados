@@ -23,10 +23,12 @@ accumulated_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis
   df <- homogenize_age(df, projection_time = projection_time, 
                        x_axis_var = x_axis_var, grouped_x_axis_var = grouped_x_axis_var)
   
-  avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var)
-  avg_df_all <- get_avg_df(df, "accumulated", scnr_name, grouped_x_axis_var)
+  avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var, lang)
+  avg_df_all <- get_avg_df(df, "accumulated", scnr_name, grouped_x_axis_var, lang)
   avg_df_all <- avg_df_all %>% rename(accumulated = y_axis_var)
-  avg_df <- merge(avg_df, avg_df_all, by = c(`scnr_name`, `grouped_x_axis_var`))
+  
+  action_name <- lang_switcher(lang, 'action_name')
+  avg_df <- merge(avg_df, avg_df_all, by = c(`scnr_name`, `grouped_x_axis_var`, `action_name`))
   
   # custom names
   avg_df$scnr_name <- avg_df[[scnr_name]]
@@ -34,10 +36,21 @@ accumulated_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis
   
   scnr <- lang_switcher(lang, "scnr_legend")
   
+  # reorder the levels of the factor
+  action_order <- lang_switcher(lang, "action_order")
+  action_order <- strsplit(action_order, "-")[[1]]
+  avg_df$action <- factor(avg_df[[action_name]], levels = action_order)
+  avg_df[[action_name]] <- NULL
+  avg_df <- avg_df %>%
+    arrange(scnr_name, grouped_x_axis_var, action)
+  action_name <- lang_switcher(lang, 'action_name_legend')
+  shape_values <- setNames(c(16, 17, 4), action_order)
+  
   g <- ggplot(avg_df, aes(x = grouped_x_axis_var, y = accumulated,  
                           group = scnr_name, colour = scnr_name)) +
+    geom_point(aes(shape = action), size = 2.5) +
     geom_line(linetype = "solid") +
-    labs(title = title, subtitle = subtitle, x = x, y = y) +
+    labs(title = title, subtitle = subtitle, x = x, y = y, shape = action_name) +
     theme_minimal() +
     theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
@@ -46,7 +59,8 @@ accumulated_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis
           panel.background = element_rect(fill = "white", color = NA),
           legend.title = element_text(size = 12),
           legend.text = element_text(size = 12)) +
-    scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) 
+    scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) +
+    scale_shape_manual(values = shape_values)   
   
   if(save %in% c("si", "yes")){
     output_string <- lang_switcher(lang, "output_accumulated")
@@ -82,10 +96,12 @@ accumulated_standing_graph <- function(df, y_axis_var, projection_time, scnr_nam
   df <- homogenize_age(df, projection_time = projection_time, 
                        x_axis_var = x_axis_var, grouped_x_axis_var = grouped_x_axis_var)
   
-  avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var)
-  avg_df_all <- get_avg_df(df, "accumulated", scnr_name, grouped_x_axis_var)
+  avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var, lang)
+  avg_df_all <- get_avg_df(df, "accumulated", scnr_name, grouped_x_axis_var, lang)
   avg_df_all <- avg_df_all %>% rename(accumulated = y_axis_var)
-  avg_df <- merge(avg_df, avg_df_all, by = c(`scnr_name`, `grouped_x_axis_var`))
+  
+  action_name <- lang_switcher(lang, 'action_name')
+  avg_df <- merge(avg_df, avg_df_all, by = c(`scnr_name`, `grouped_x_axis_var`, `action_name`))
   
   # custom names
   avg_df$scnr_name <- avg_df[[scnr_name]]
@@ -94,11 +110,23 @@ accumulated_standing_graph <- function(df, y_axis_var, projection_time, scnr_nam
   scnr <- lang_switcher(lang, "scnr_legend")
   caption <- lang_switcher(lang, "caption")
   
+  # reorder the levels of the factor
+  action_order <- lang_switcher(lang, "action_order")
+  action_order <- strsplit(action_order, "-")[[1]]
+  avg_df$action <- factor(avg_df[[action_name]], levels = action_order)
+  avg_df[[action_name]] <- NULL
+  avg_df <- avg_df %>%
+    arrange(scnr_name, grouped_x_axis_var, action)
+  action_name <- lang_switcher(lang, 'action_name_legend')
+  shape_values <- setNames(c(16, 17, 4), action_order)
+  
   g <- ggplot(avg_df, aes(x = grouped_x_axis_var, y = accumulated,  
                           group = scnr_name, colour = scnr_name)) +
+    geom_point(aes(shape = action), size = 2.5) +
     geom_line(linetype = "solid") +
     geom_line(aes(y = y_axis_var), linetype = "dashed") +
-    labs(title = title, subtitle = subtitle, x = x, y = y, caption = caption) +
+    geom_point(aes(y = y_axis_var, shape = action), size = 2.5) +
+    labs(title = title, subtitle = subtitle, x = x, y = y, caption = caption, shape = action_name) +
     theme_minimal() +
     theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
@@ -107,7 +135,8 @@ accumulated_standing_graph <- function(df, y_axis_var, projection_time, scnr_nam
           panel.background = element_rect(fill = "white", color = NA),
           legend.title = element_text(size = 12),
           legend.text = element_text(size = 12)) +
-    scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) 
+    scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) +
+    scale_shape_manual(values = shape_values)   
   
   if(save %in% c("si", "yes")){
     output_string <- lang_switcher(lang, "output_standing_accumulated")
@@ -155,8 +184,13 @@ get_accumulated_variable <- function(df, y_axis_var,
           acc_variable <- new_row[[y_axis_var]]
           new_row$accumulated <- acc_variable
         } else {
-          # estimate increment
-          acc_variable <- acc_variable + abs(new_row$diff)
+          # estimate increment except on harvests, that must be excluded
+          # acc_variable <- acc_variable + abs(new_row$diff)
+          if(new_row$diff > 0){
+            acc_variable <- acc_variable + new_row$diff
+            } else {
+              acc_variable <- acc_variable
+            }
           new_row$accumulated <- acc_variable
         }
         
@@ -176,11 +210,13 @@ get_accumulated_variable <- function(df, y_axis_var,
 # y_axis_var: variable to be averaged
 # scnr_name: column name for the scenario groups (folder_name by default)
 # grouped_x_axis_var: column name for the variable that will be displayed on x axis grouped (T_grouped by default)
-get_avg_df <- function(df, y_axis_var, scnr_name = "folder_name", grouped_x_axis_var = "T_grouped"){
+# lang: language for the output (es by default)
+get_avg_df <- function(df, y_axis_var, scnr_name = "folder_name", grouped_x_axis_var = "T_grouped", lang = "es"){
   
   # get average values for each group and stand age
+  action_name <- lang_switcher(lang, 'action_name')
   avg_df <- df %>%
-    group_by(across(all_of(c(scnr_name, grouped_x_axis_var)))) %>%
+    group_by(across(all_of(c(scnr_name, grouped_x_axis_var, action_name)))) %>%
     summarise(y_axis_var = mean(.data[[y_axis_var]], na.rm = TRUE), .groups = "drop")
   
   return(avg_df)
@@ -271,6 +307,8 @@ lang_switcher <- function(lang, text){
   translations <- list(
     sheet_name = c(es = "Parcelas", en = "Plots"),
     action_name = c(es = "Accion", en = "Action"),
+    action_name_legend = c(es = "Acción", en = "Action"),
+    action_order = c(es = "Inicialización-Ejecución-Corta", en = "Initialization-Execution-Thinning"), 
     scnr_name = c(es = "Nombre_archivo_escenario", en = "Scenario_file_name"),
     scnr_legend = c(es = "Escenario", en = "Scenario"),
     caption = c(
@@ -361,7 +399,7 @@ standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_va
   df <- homogenize_age(df, projection_time = projection_time, 
                        x_axis_var = x_axis_var, grouped_x_axis_var = grouped_x_axis_var) 
   
-  avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var)
+  avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var, lang)
   
   # custom names
   avg_df$scnr_name <- avg_df[[scnr_name]]
@@ -369,10 +407,22 @@ standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_va
   
   scnr <- lang_switcher(lang, "scnr_legend")
   
+  # reorder the levels of the factor
+  action_order <- lang_switcher(lang, "action_order")
+  action_order <- strsplit(action_order, "-")[[1]]
+  action_name <- lang_switcher(lang, 'action_name')
+  avg_df$action <- factor(avg_df[[action_name]], levels = action_order)
+  avg_df[[action_name]] <- NULL
+  avg_df <- avg_df %>%
+    arrange(scnr_name, grouped_x_axis_var, action)
+  action_name <- lang_switcher(lang, 'action_name_legend')
+  shape_values <- setNames(c(16, 17, 4), action_order)
+  
   g <- ggplot(avg_df, aes(x = grouped_x_axis_var, y = y_axis_var,  
               group = scnr_name, colour = scnr_name)) +
+    geom_point(aes(shape = action), size = 2.5) +
     geom_line(linetype = "solid") +
-    labs(title = title, subtitle = subtitle, x = x, y = y) +
+    labs(title = title, subtitle = subtitle, x = x, y = y, shape = action_name) +
     theme_minimal() +
     theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
           plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
@@ -381,7 +431,8 @@ standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_va
           panel.background = element_rect(fill = "white", color = NA),
           legend.title = element_text(size = 12),
           legend.text = element_text(size = 12)) +
-    scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) 
+    scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) +
+    scale_shape_manual(values = shape_values)   
   
   if(save %in% c("si", "yes")){
     output_string <- lang_switcher(lang, "output_standing")

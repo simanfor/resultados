@@ -1,7 +1,7 @@
 ---
-title: "Comparison of SIMANFOR simulations"
+title: "SIMANFOR simulations comparison"
 author: "Aitor Vázquez Veloso"
-date: "2025-02-12"
+date: "2025-03-08"
 output: html_document
 editor_options: 
   markdown: 
@@ -33,6 +33,9 @@ Additionally, the resulting files from SIMANFOR simulations must:
 
 ![Figure 1. Example of the folders organization structure](./recursos/carpetas.png) 
 
+
+
+# Example 1: Comparison of 3 management scenarios for a common inventory
 
 
 ## Installation and loading of packages
@@ -98,6 +101,16 @@ Here are some commands you can use to explore your data:
 plots <- load_plot_data(simulations_path, lang)
 ```
 
+Graphs are typically created using stand age to observe its evolution and the effects of silviculture. 
+Checking the initial stand age of our plots is a good practice, especially when different initial ages are 
+included in the inventory. In our example, it looks like this:
+
+![edades_parcelas](./recursos/edades_iniciales_ps_no_maderables.png)
+
+Initial plot ages range from 10 to 45 years. Plots following the same silvicultural guidelines will be averaged, 
+and differences in initial stand age may affect the graphs, as we will see later. 
+Feel free to explore all available variables to gain a better understanding of your data.
+
 ### Creating graphs
 
 Great, we have taken the necessary steps to start graphing the simulation results.
@@ -129,7 +142,19 @@ predictions were made), or `Scenario_age` (simulated time, with your initial inv
 
 *Note: The graphs saved on your computer are re scaled to prevent text from being cut off and to improve presentation.*
 
-#### Example graph: density evolution
+#### Example graphs: standing values
+
+##### Evolution of stand density
+
+Notice that the extreme variations below 50 years are due to differences in the initial stand age of the plots used, as
+we noticed before. Values are averaged by stand age, so if an older plot with a higher density than the previous one 
+enters the simulation, the mean density will increase. Conversely, if a new plot with a lower density than the previous 
+one enters, the mean density will decrease. Once all plots are included in the simulation, the stand evolution 
+becomes smoother and easier to evaluate.
+
+*Note: In all graphs, each group of plots (in this case, each silvicultural scenario) will be represented using a* 
+*different color. Each action proposed in our scenario (initialization, projection, or harvest) will be marked on the*
+*graph with a distinct symbol. Refer to the legend for more details.*
 
 ```{r}
 graph_selector(df = plots, projection_time = projection_time, lang = lang, 
@@ -140,7 +165,34 @@ graph_selector(df = plots, projection_time = projection_time, lang = lang,
                x = "Stand age (years)", y = "Density (trees/ha)")
 ```
 
-#### Example graph: total accumulated biomass evolution
+##### Evolution of dominant height
+
+Just to show you how to modify the remaining arguments, this time I'll set the *save* argument to avoid saving the 
+graph and remove the *output_path* argument since it won’t be needed.
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               # save = save, output_path = output_path,
+               save = 'no',
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dominant height evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Dominant height (m)")
+```
+
+#### Example graph: accumulated values
+
+##### Evolution of accumulated biomass, including all the tree sections (roots, stem, canopy)
+
+This graph may take a little longer to generate. Please wait, everything is working properly.
+
+In this graph, you can see that both silvicultural scenarios achieve higher biomass production by the end of the 
+simulation. Additionally, the **x** symbol (indicating a harvest) is placed at the same position as the projection 
+symbol, meaning a harvest occurred, but the extracted biomass was not deducted. These graphs display total biomass 
+production, including harvested biomass, to compare overall productivity rather than just the remaining stand biomass.
+
+*Note: It makes sense to use this type of graph for variables such as volume or biomass, while stand density or* 
+*dominant height are not suitable for this type of analysis.*
 
 ```{r}
 graph_selector(df = plots, projection_time = projection_time, lang = lang, 
@@ -151,8 +203,30 @@ graph_selector(df = plots, projection_time = projection_time, lang = lang,
                x = "Stand age (years)", y = "Total accumulated biomass (t/ha)")
 ```
 
+##### Evolution of accumulated stem biomass, excluding the remaining tree sections (roots, branches and canopy)
 
-#### Example graph: volume over bark evolution (standing + accumulated)
+Just to show you how to modify the remaining arguments, this time I'll skip both axis labels.
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "accumulated", x_axis_var = "T", y_axis_var = "WSW",
+               title = "Accumulated stem biomass evolution during the simulation period",
+               subtitle = "Pinus sylvestris stands"#,
+               #x = "Stand age (years)", y = "Accumulated stem biomass (t/ha)"
+               )
+```
+
+#### Example graph: standing + accumulated values
+
+##### Volume over bark evolution (standing + accumulated)
+
+In this type of graph, you can directly compare the total yield accumulated during the simulation with the remaining 
+production in the living trees at the end of the simulation (standing). Additionally, it allows for the simultaneous 
+comparison of all silvicultural scenarios.
+
+*Note: The solid line represents the total production (standing + extracted); the dashed line represents the* 
+*standing value*
 
 ```{r} 
 graph_selector(df = plots, projection_time = projection_time, lang = lang, 
@@ -161,4 +235,132 @@ graph_selector(df = plots, projection_time = projection_time, lang = lang,
                title = "Volume over bark evolution during the simulation period", 
                subtitle = "Pinus sylvestris stands", 
                x = "Stand age (years)", y = "Volume over bark (m³/ha)")
+```
+
+##### Volume over bark evolution (standing + accumulated) - *x-axis = Year*
+
+Just to show you how to modify the remaining arguments, this time I'll skip the title and subtitle. Additionally, I'll
+change the x-axis variable to `Year` to show you how the graph changes.
+
+What’s happening in our graph? Well, it’s a mess... As you may recall, in this example, we are working with multiple 
+plots that have different initial conditions. This is why the graph appears so chaotic. The average values are 
+calculated based on stand age, but the x-axis displays the *Year* variable instead of stand age. This mismatch causes 
+misalignment on the x-axis, making the graph difficult to interpret (and even meaningless). I recommend using stand age 
+as the x-axis variable when working with this type of graph. However, if your plots have the same initial conditions, 
+you can use the *Year* or *Scenario_age* variable without any issues.
+
+```{r} 
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "Anho", y_axis_var = "V_con_corteza", 
+               # title = "Volume over bark evolution during the simulation period",
+               # subtitle = "Pinus sylvestris stands", 
+               x = "Stand age (years)", y = "Volume over bark (m³/ha)")
+```
+
+
+# Example 2: Comparison between Site Quality areas
+
+Great! Now, I will repeat the process using another set of simulations. 
+This time, I will compare the evolution of a similar stand located in different Site Quality areas under a
+common silvicultural scenario. I will skip the explanations this time, as the process is the same as in the previous.
+I will only show you the code and the resulting graphs.
+
+```{r}
+rm(list = ls())
+source('functions.r')
+simulations_path <- '/home/aitor/Downloads/Ppinaster-Del_Rio_2006/' 
+list.files(simulations_path, full.names = TRUE)
+```
+
+```{r}
+lang <- "es"
+projection_time <- 5  
+save <- "no"  
+# output_path <- getwd()  
+plots <- load_plot_data(simulations_path, lang)
+```
+
+#### Example graphs: standing values
+
+##### Evolution of stand density
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Stand density evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Stand age (years)", y = "Stand density (trees/ha)")
+```
+
+##### Evolution of stand basal area
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "G", 
+               title = "Stand basal area evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Stand age (years)", y = "Stand basal area (m²/ha)")
+```
+
+##### Evolution of dominant height
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dominant height evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Stand age (years)", y = "Dominant height (m)")
+```
+
+#### Example graph: accumulated values - *x-axis = Year*
+
+##### Evolution of accumulated stem biomass
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "accumulated", x_axis_var = "Anho", y_axis_var = "WSW", 
+               title = "Accumulated stem biomass evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Year", y = "Accumulated stem biomass (t/ha)")
+```
+
+##### Evolution of accumulated volume under bark
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "accumulated", x_axis_var = "Anho", y_axis_var = "V_sin_corteza", 
+               title = "Accumulated volume under bark evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Year", y = "Accumulated volume under bark (m³/ha)")
+```
+
+
+#### Example graph: standing + accumulated values - *x-axis = Scenario_age*
+
+##### Evolution of standing + accumulated stem biomass
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "standing + accumulated", x_axis_var = "Edad_de_escenario", y_axis_var = "WSW", 
+               title = "Standing and accumulated stem biomass evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Simulation", y = "Accumulated stem biomass (t/ha)")
+```
+
+##### Evolution of standing + accumulated volume under bark
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "standing + accumulated", x_axis_var = "Edad_de_escenario", y_axis_var = "V_sin_corteza", 
+               title = "Standing and accumulated volume under bark evolution during the simulation period", 
+               subtitle = "Pinus pinaster stands",
+               x = "Simulation", y = "Accumulated volume under bark (m³/ha)")
 ```

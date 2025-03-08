@@ -1,7 +1,7 @@
 ---
 title: "Comparativa de simulaciones de SIMANFOR"
 author: "Aitor Vázquez Veloso"
-date: "2025-02-12"
+date: "2025-03-08"
 output: html_document
 editor_options: 
   markdown: 
@@ -99,6 +99,16 @@ Te dejo por aquí una serie de comandos que puedes utilizar para explorar tus da
 plots <- load_plot_data(simulations_path, lang)
 ```
 
+Los gráficos suelen crearse utilizando la edad del rodal para observar su evolución y los efectos de la silvicultura.
+Verificar la edad inicial del rodal en nuestras parcelas es una buena práctica, especialmente cuando el inventario 
+incluye diferentes edades iniciales. En nuestro ejemplo, se ve así:
+
+![edades_parcelas](./recursos/edades_iniciales_ps_no_maderables.png)
+
+Las edades iniciales de las parcelas varían entre 10 y 45 años. Las parcelas que siguen la misma selvicultura se 
+promediarán, y las diferencias en la edad inicial del rodal pueden afectar los gráficos, como veremos más adelante.
+Siéntete libre de explorar todas las variables disponibles para comprender mejor tus datos.
+
 
 ### Creación de gráficos
 
@@ -132,35 +142,230 @@ que se han hecho las predicciones), o `Edad_de_escenario` (tiempo simulado, teni
 *Nota: los gráficos guardados en tu ordenador están reescalados para evitar cortes en el texto y mejorar la presentación*
 
 
-#### Gráfico de ejemplo: evolución de la densidad
+#### Ejemplo de gráficos: valores en pie  
+
+##### Evolución de la densidad del rodal  
+
+Ten en cuenta que las variaciones extremas por debajo de los 50 años se deben a las diferencias en la edad inicial del 
+rodal en las parcelas utilizadas, como mencionamos anteriormente. Los valores se promedian según la edad del rodal, 
+por lo que, si una parcela más madura con una densidad mayor que la anterior entra en la simulación, la densidad media 
+aumentará. Por el contrario, si ingresa una nueva parcela con una densidad menor que la anterior, la densidad media 
+disminuirá. Una vez que todas las parcelas están incluidas en la simulación, la evolución del rodal se vuelve más 
+estable y fácil de evaluar.  
+
+*Nota: En todos los gráficos, cada grupo de parcelas (en este caso, cada escenario selvícola) se representará con un*  
+*color diferente. Cada acción propuesta en nuestro escenario (inicialización, proyección o cosecha) se marcará en el*  
+*gráfico con un símbolo distinto. Consulta la leyenda para más detalles.*
 
 ```{r}
 graph_selector(df = plots, projection_time = projection_time, lang = lang, 
                save = save, output_path = output_path,
                graph_type = "en pie", x_axis_var = "T", y_axis_var = "N", 
-               title = "Evolución de la densidad durante el periodo de la simulación", 
+               title = "Evolución de la densidad durante la simulación", 
                subtitle = "Masas de Pinus sylvestris",
                x = "Edad de la masa (años)", y = "Densidad (pies/ha)")
 ```
 
-#### Gráfico de ejemplo: evolución de la biomasa total acumulada
+##### Evolución de la altura dominante  
+
+Para mostrarte cómo modificar los argumentos restantes, esta vez estableceré el argumento *save* para evitar guardar 
+el gráfico y eliminaré el argumento *output_path*, ya que no será necesario.
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               # save = save, output_path = output_path,
+               save = 'no',
+               graph_type = "en pie", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Evolución de la altura dominante durante la simulación", 
+               subtitle = "Masas de Pinus sylvestris",
+               x = "Edad de la masa (años)", y = "Altura dominante (m)")
+```
+
+#### Ejemplo de gráfico: valores acumulados  
+
+##### Evolución de la biomasa acumulada, incluyendo todas las secciones del árbol (raíces, tronco, copa)  
+
+Este gráfico puede tardar un poco más en generarse. Por favor, espera, todo está funcionando correctamente.  
+
+En este gráfico puedes observar que ambos escenarios selvícolas logran una mayor producción de biomasa al final de la 
+simulación. Además, el símbolo **x** (que indica una corta) se encuentra en la misma posición que el símbolo de 
+proyección, lo que significa que se realizó una corta, pero la biomasa extraída no fue descontada. Estos gráficos 
+muestran la producción total de biomasa, incluyendo la biomasa extraída en las cortas, para comparar la productividad 
+general en lugar de solo la biomasa que permanece en el rodal.  
+
+*Nota: Tiene sentido usar este tipo de gráfico para variables como el volumen o la biomasa, mientras que la densidad*
+*del rodal o la altura dominante no son adecuadas para este tipo de análisis.*
 
 ```{r}
 graph_selector(df = plots, projection_time = projection_time, lang = lang, 
                save = save, output_path = output_path,
-               graph_type = "acumulado", x_axis_var = "T", y_axis_var = "WT", 
-               title = "Evolución de la biomasa total acumulada durante el periodo de la simulación",
+               graph_type = "acumulado", x_axis_var = "T", y_axis_var = "WT",
+               title = "Evolución de la biomasa total acumulada durante la simulación",
                subtitle = "Masas de Pinus sylvestris",
                x = "Edad de la masa (años)", y = "Biomasa total acumulada (t/ha)")
 ```
 
-#### Gráfico de ejemplo: evolución del volumen con corteza (en pie y acumulado)
+##### Evolución de la biomasa acumulada del tronco, excluyendo las demás secciones del árbol (raíces, ramas y copa)  
+
+Para mostrarte cómo modificar los argumentos restantes, esta vez omitiré las etiquetas de ambos ejes.
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "acumulado", x_axis_var = "T", y_axis_var = "WSW",
+               title = "Evolución de la biomasa del tronco acumulada durante la simulación",
+               subtitle = "Masas de Pinus sylvestris"#,
+               #x = "Edad de la masa (años)", y = "Biomasa acumulada del tronco (t/ha)"
+               )
+```
+
+#### Ejemplo de gráfico: valores en pie + acumulados  
+
+##### Evolución del volumen con corteza (en pie + acumulado)  
+
+En este tipo de gráfico, puedes comparar directamente la producción total acumulada durante la simulación con la 
+producción que permanece en el monte en los árboles vivos al final de la simulación (en pie). Además, permite la 
+comparación simultánea de todos los escenarios selvícolas.  
+
+*Nota: La línea sólida representa la producción total (en pie + extraída); la línea discontinua representa el valor en pie.*
 
 ```{r} 
 graph_selector(df = plots, projection_time = projection_time, lang = lang, 
                save = save, output_path = output_path, 
                graph_type = "en pie + acumulado", x_axis_var = "T", y_axis_var = "V_con_corteza", 
-               title = "Evolución del volumen con corteza durante el periodo de la simulación", 
+               title = "Evolución del volumen con corteza durante la simulación", 
                subtitle = "Masas de Pinus sylvestris", 
                x = "Edad de la masa (años)", y = "Volumen con corteza (m³/ha)")
+```
+
+##### Evolución del volumen con corteza (en pie + acumulado) - *Eje X = Año*  
+
+Para mostrarte cómo modificar los argumentos restantes, esta vez omitiré el título y el subtítulo. Además, cambiaré la 
+variable del eje X a `Anho` para mostrarte cómo cambia el gráfico.  
+
+¿Qué está ocurriendo en nuestro gráfico? Bueno, es un desastre... Como recordarás, en este ejemplo estamos trabajando 
+con múltiples parcelas que tienen diferentes condiciones iniciales. Por esta razón, el gráfico parece tan caótico. 
+Los valores promedio se calculan en función de la edad del rodal, pero el eje X muestra la variable *Year* en lugar de 
+la edad del rodal. Esta discrepancia provoca un desalineamiento en el eje X, lo que dificulta la interpretación del 
+gráfico (y lo vuelve poco interesante).  
+
+Recomiendo usar la edad del rodal como variable del eje X al trabajar con este tipo de gráfico. Sin embargo, si tus 
+parcelas tienen las mismas condiciones iniciales, puedes usar las variables *Anho* o *Edad_de_escenario* sin problemas.
+
+```{r} 
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "en pie + acumulado", x_axis_var = "Anho", y_axis_var = "V_con_corteza", 
+               # title = "Evolución del volumen con corteza durante la simulación",
+               # subtitle = "Masas de Pinus sylvestris", 
+               x = "Edad de la masa (años)", y = "Volumen con corteza (m³/ha)")
+```
+
+
+# Ejemplo 2: Comparación entre distinas Calidades de Estación
+
+¡Genial! Ahora repetiré el proceso utilizando otro conjunto de simulaciones.  
+Esta vez, compararé la evolución de un rodal similar ubicado en diferentes áreas de Calidad de Estación bajo un 
+escenario selvícola común.  
+
+Esta vez omitiré las explicaciones, ya que el proceso es el mismo que en el caso anterior.  
+Solo te mostraré el código y los gráficos resultantes.
+
+```{r}
+rm(list = ls())
+source('functions.r')
+simulations_path <- '/home/aitor/Downloads/Ppinaster-Del_Rio_2006/' 
+list.files(simulations_path, full.names = TRUE)
+```
+
+```{r}
+lang <- "es"
+projection_time <- 5  
+save <- "no"  
+# output_path <- getwd()  
+plots <- load_plot_data(simulations_path, lang)
+```
+
+#### Ejemplo de gráficos: valores en pie  
+
+##### Evolución de la densidad del rodal
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "en pie", x_axis_var = "T", y_axis_var = "N", 
+               title = "Evolución de la densidad a lo largo de la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Edad de la masa (años)", y = "Densidad (pies/ha)")
+```
+
+##### Evolución del área basimétrica del rodal
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "en pie", x_axis_var = "T", y_axis_var = "G", 
+               title = "Evolución del área basimétrica a lo largo de la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Edad de la masa (años)", y = "Área basimétrica (m²/ha)")
+```
+
+##### Evolución de la altura dominante del rodal
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "en pie", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Evolución de la altura dominante a lo largo de la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Edad de la masa (años)", y = "Altura dominante (m)")
+```
+
+#### Ejemplo de gráfico: valores acumulados - *Eje X = Año*  
+
+##### Evolución de la biomasa acumulada del tronco
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "acumulado", x_axis_var = "Anho", y_axis_var = "WSW", 
+               title = "Evolución de la biomasa acumulada del tronco durante la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Año", y = "Biomasa acumulada del tronco (t/ha)")
+```
+
+##### Evolución del volumen sin corteza
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "acumulado", x_axis_var = "Anho", y_axis_var = "V_sin_corteza", 
+               title = "Evolución del volumen sin corteza acumulado durante la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Año", y = "Volumen sin corteza (m³/ha)")
+```
+
+
+#### Ejemplo de gráfico: valores en pie + acumulados - *Eje X = Edad_de_escenario*  
+
+##### Evolución de la biomasa del tronco en pie + acumulada
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "en pie + acumulado", x_axis_var = "Edad_de_escenario", y_axis_var = "WSW", 
+               title = "Evolución de la biomasa acumulada y en pie del tronco durante la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Simulación", y = "Biomasa acumulada del tronco (t/ha)")
+```
+
+##### Evolución del volumen sin corteza en pie + acumulado
+
+```{r}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, 
+               graph_type = "en pie + acumulado", x_axis_var = "Edad_de_escenario", y_axis_var = "V_sin_corteza", 
+               title = "Evolución del volumen sin corteza acumulado y en pie durante la simulación", 
+               subtitle = "Masas de Pinus pinaster",
+               x = "Simulación", y = "Volumen sin corteza (m³/ha)")
 ```
