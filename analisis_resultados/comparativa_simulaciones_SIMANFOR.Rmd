@@ -41,6 +41,7 @@ archivo. Este archivo contiene funciones necesarias para la ejecución de este c
 ```{r message=FALSE}
 source('functions.r')
 install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+# install_and_load(c("tinytex", "rmarkdown", "knitr"))  # estas librerías son necesarias para la creación de informes
 ```
 
 Sería necesario establecer nuestro directorio de trabajo, pero con los archivos *.Rmd* no es necesario, ya que toman
@@ -259,6 +260,58 @@ graph_selector(df = plots, projection_time = projection_time, lang = lang,
                # title = "Evolución del volumen con corteza durante la simulación",
                # subtitle = "Masas de Pinus sylvestris", 
                x = "Edad de la masa (años)", y = "Volumen con corteza (m³/ha)")
+```
+
+### Resumen de datos: biomasa total
+
+Además de visualizar nuestros resultados mediante gráficos, es muy útil generar una tabla resumen que nos permita 
+observar cómo evoluciona la variable de interés a lo largo del tiempo. En este caso, queremos analizar la evolución de 
+la masa, los valores acumulados y los valores extraídos durante la simulación. Para ello, utilizamos la función 
+`get_variable_summary`, incluida en el archivo `functions.r`.
+
+Esta función permite resumir cualquier variable numérica del conjunto de datos, agrupándola en función de una 
+variable temporal. Los argumentos que acepta son los siguientes:
+
+- **df:** Data frame con los resultados (por defecto, `plots`)
+- **x_axis_var:** Variable temporal para agrupar los valores de la variable *y*, a elegir entre: `T` (edad de la masa), 
+`Anho` (año para el 
+que se han hecho las predicciones), o `Edad_de_escenario` (tiempo simulado, teniendo tu inventario inicial el valor 0). 
+*Nota: revisa tus datos para saber qué variables tienes disponibles (por defecto se utiliza `T`). Ten en cuenta que*
+*los resultados serán diferentes dependiendo de los valores iniciales de estas variables en cada parcela utilizada, *
+*puesto que se calculará el valor promedio de todas ellas*
+- **y_axis_var:** Variable numérica sobre la que se quieren hacer los cálculos
+- **projection_time:** Tiempo de proyección del modelo usado en las simulaciones (lo hemos definido anteriormente)
+- **lang:** Idioma de los resultados (lo hemos definido anteriormente)
+- **save:** Guardar los datos (lo hemos definido anteriormente)
+- **output_path:** Ruta donde se guardarán los datos (lo hemos definido anteriormente)
+
+```{r}
+df_wt <- get_variable_summary(df = plots, x_axis_var = "T", y_axis_var = "WT", projection_time = 5, 
+                              lang = "es", save = "yes", output_path = output_path)
+```                                     
+
+Una vez creada la tabla resumen, podemos examinar su contenido con funciones básicas:
+
+```{r}
+head(df_wt)
+summary(df_wt)
+```
+
+### Resumen de datos: variables nuevas
+
+Además de trabajar con variables ya presentes en nuestros resultados, también podemos crear nuevas variables combinando 
+otras existentes. Por ejemplo, podemos calcular la biomasa aérea (WSB), que incluye la biomasa del tronco y de las 
+ramas, sumando las siguientes variables:
+
+- **WSW**: biomasa del tronco
+- **WTHICKB, WB2_7, WTBL**: biomasa de ramas de diferentes tamaños
+
+El cálculo de esta nueva variable y su posterior resumen sería:
+
+```{r}
+plots$WSB <- plots$WSW + plots$WTHICKB + plots$WB2_7 + plots$WTBL  # cálculo de la biomasa aérea (t/ha)
+df_wsb <- get_variable_summary(df = plots, x_axis_var = "T", y_axis_var = "WSB", projection_time = 5, 
+                                    lang = "es", save = "no")
 ```
 
 

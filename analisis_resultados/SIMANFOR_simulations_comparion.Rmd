@@ -46,6 +46,7 @@ document. This file contains functions necessary for executing this code.
 ```{r message=FALSE}
 source('functions.r')
 install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+# install_and_load(c("tinytex", "rmarkdown", "knitr"))  # these libraries are necessary for the reports creation
 ```
 
 Setting the working directory would normally be required, but for *.Rmd* files, it is not necessary, as they use 
@@ -258,6 +259,56 @@ graph_selector(df = plots, projection_time = projection_time, lang = lang,
                x = "Stand age (years)", y = "Volume over bark (m³/ha)")
 ```
 
+### Data summary: total biomass
+
+In addition to visualizing our results through plots, it's often helpful to create a summary table to track how our 
+variable of interest evolves over time. In this case, we're interested in monitoring changes in 
+biomass, cumulative values, and extracted values throughout the simulation. To do this, we'll use the 
+`get_variable_summary` function, which is defined in the `functions.r` file.
+
+This function allows us to summarize any numeric variable from our dataset, 
+grouping it by a selected time-related variable. The function arguments are:
+
+- **df:** Data frame with the results (default: `plots`)
+- **x_axis_var:** Variable used to group *y* variable, chosen from: `T` (stand age), `Year` (year for which 
+predictions were made), or `Scenario_age` (simulated time, with your initial inventory having a value of 0).  
+*Note: Check your data to see which variables are available (by default, `T` is used). Keep in mind that the results *
+*will vary depending on the initial values of these variables in each plot used, as the average value of all of them *
+*will be calculated.*
+- **y_axis_var:** The numeric variable to be summarized
+- **projection_time:** Model projection time used in the simulations (defined earlier)
+- **lang:** Language of the results (defined earlier)
+- **save:** Save the graphs (defined earlier)
+- **output_path:** Path where the graphs will be saved (defined earlier)
+
+```{r}
+df_wt <- get_variable_summary(df = plots, x_axis_var = "T", y_axis_var = "WT", projection_time = 5, 
+                              lang = "es", save = "yes", output_path = output_path)
+```                                     
+
+Once the summary table is generated, we can inspect it using basic functions:
+
+```{r}
+head(df_wt)
+summary(df_wt)
+```
+
+### Data summary: new variables
+
+In addition to analyzing existing variables from our results, we can also create new variables by combining others. 
+For example, we can calculate aboveground biomass (WSB, which includes stem and branch biomass) by summing the 
+following variables:
+
+- **WSW**: stem biomass
+- **WTHICKB, WB2_7, WTBL**: different branch sizes biomass
+
+Here's how we compute the new variable and generate its summary:
+
+```{r}
+plots$WSB <- plots$WSW + plots$WTHICKB + plots$WB2_7 + plots$WTBL  # calculation of aboveground biomass (t/ha)
+df_wsb <- get_variable_summary(df = plots, x_axis_var = "T", y_axis_var = "WSB", projection_time = 5, 
+                                    lang = "es", save = "no")
+```
 
 # Example 2: Comparison between Site Quality areas
 
