@@ -67,7 +67,7 @@ accumulated_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis
   if(save %in% c("si", "yes")){
     output_string <- lang_switcher(lang, "output_accumulated")
     ggsave(paste(output_path, "/", y_axis_var, "_vs_", x_axis_var, "-", output_string, ".png", sep = ""), 
-           plot = g, width = 17, height = 10)
+           plot = g, width = 13, height = 7.5)
   }
   
   return(g)
@@ -146,7 +146,7 @@ accumulated_standing_graph <- function(df, y_axis_var, projection_time, scnr_nam
   if(save %in% c("si", "yes")){
     output_string <- lang_switcher(lang, "output_standing_accumulated")
     ggsave(paste(output_path, "/", y_axis_var, "_vs_", x_axis_var, "-", output_string, ".png", sep = ""), 
-           plot = g, width = 17, height = 10)
+           plot = g, width = 13, height = 7.5)
   }
   
   return(g)
@@ -591,7 +591,7 @@ standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_va
   if(save %in% c("si", "yes")){
     output_string <- lang_switcher(lang, "output_standing")
     ggsave(paste(output_path, "/", y_axis_var, "_vs_", x_axis_var, "-", output_string, ".png", sep = ""), 
-           plot = g, width = 17, height = 10)
+           plot = g, width = 13, height = 7.5)
   }
   
   return(g)
