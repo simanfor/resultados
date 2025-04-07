@@ -23,6 +23,8 @@ accumulated_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis
   df <- homogenize_age(df, projection_time = projection_time, 
                        x_axis_var = x_axis_var, grouped_x_axis_var = grouped_x_axis_var)
   
+  df <- skip_duplicated_harvests(df, grouped_x_axis_var = grouped_x_axis_var, file_groups = "file_name")
+  
   avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var, lang)
   avg_df_all <- get_avg_df(df, "accumulated", scnr_name, grouped_x_axis_var, lang)
   avg_df_all <- avg_df_all %>% rename(accumulated = y_axis_var)
@@ -96,6 +98,8 @@ accumulated_standing_graph <- function(df, y_axis_var, projection_time, scnr_nam
   
   df <- homogenize_age(df, projection_time = projection_time, 
                        x_axis_var = x_axis_var, grouped_x_axis_var = grouped_x_axis_var)
+  
+  df <- skip_duplicated_harvests(df, grouped_x_axis_var = grouped_x_axis_var, file_groups = "file_name")
   
   avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var, lang)
   avg_df_all <- get_avg_df(df, "accumulated", scnr_name, grouped_x_axis_var, lang)
@@ -500,6 +504,31 @@ load_plot_data <- function(simulations_path, lang = "es"){
 
 
 
+skip_duplicated_harvests <- function(df, grouped_x_axis_var = 'T_grouped', file_groups = "file_name"){
+  # Function to skip duplicated harvests when they are programmed at the same age
+  # internal function
+  # Arguments:
+  # df: data frame to be processed
+  # grouped_x_axis_var: column name for the variable that will be displayed on x axis grouped (T_grouped by default)
+  # file_groups: column name for the groups (file_name by default)
+  
+  # get average values for each group and stand age
+  action_name <- lang_switcher(lang, 'action_name')
+  
+  df <- df %>%
+    mutate(row_id = row_number()) %>%  # preserve original order
+    group_by(across(all_of(c(action_name, grouped_x_axis_var, file_groups)))) %>%
+    mutate(n = n(),
+           orden = row_number()) %>%
+    ungroup() %>%
+    filter(!(n > 1 & orden == 1)) %>%  # delete just the first of the duplicated harvests
+    select(-row_id, -n, -orden)
+  
+  return(df)
+}
+
+
+
 standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_var, grouped_x_axis_var, lang, 
                            title, subtitle, x, y, save, output_path){
   # Function to graph the standing value of a desired variable for each scenario 
@@ -521,6 +550,8 @@ standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_va
   
   df <- homogenize_age(df, projection_time = projection_time, 
                        x_axis_var = x_axis_var, grouped_x_axis_var = grouped_x_axis_var) 
+  
+  df <- skip_duplicated_harvests(df, grouped_x_axis_var = grouped_x_axis_var, file_groups = "file_name")
   
   avg_df <- get_avg_df(df, y_axis_var, scnr_name, grouped_x_axis_var, lang)
   
