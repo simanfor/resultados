@@ -514,10 +514,11 @@ skip_duplicated_harvests <- function(df, grouped_x_axis_var = 'T_grouped', file_
   
   # get average values for each group and stand age
   action_name <- lang_switcher(lang, 'action_name')
+  scnr_name <- lang_switcher(lang, 'scnr_name')
   
   df <- df %>%
     mutate(row_id = row_number()) %>%  # preserve original order
-    group_by(across(all_of(c(action_name, grouped_x_axis_var, file_groups)))) %>%
+    group_by(across(all_of(c(action_name, grouped_x_axis_var, file_groups, scnr_name)))) %>%
     mutate(n = n(),
            orden = row_number()) %>%
     ungroup() %>%
