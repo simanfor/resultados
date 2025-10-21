@@ -1,0 +1,147 @@
+---
+title: "Using SIMANFOR to compare different management alternatives in mixed stand"
+author: "Aitor Vázquez Veloso & Felipe Bravo Oviedo"
+date: "2025-10-20"
+output:
+  pdf_document: default
+  html_document: default
+subtitle: An example on *Pinus sylvestris* x *Pinus pinaster* mixed stands in Spain
+editor_options:
+  markdown:
+    wrap: sentence
+---
+
+```{r, echo=FALSE, message=FALSE}
+source('/home/aitor/Downloads/simanfor/functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+# install_and_load(c("tinytex", "rmarkdown", "knitr"))  # these libraries are necessary for the reports creation
+```
+
+```{r, echo=FALSE, message=FALSE}
+simulations_path <- '/home/aitor/Downloads/simanfor/Psylvestris_x_Ppinaster-silviculture/' 
+# list.files(simulations_path, full.names = TRUE)
+```
+
+```{r, echo=FALSE}
+lang <- "en"
+projection_time <- 5  
+save <- "yes"  
+output_path <- getwd()  
+
+plots <- load_plot_data(simulations_path, lang)
+plots <- plots[plots$T <= 120, ]
+```
+
+### Summary of thinning regimes
+
+A **control scenario (CONT)** without silviculture was simulated as the reference of natural growth, with no thinning during the simulation.
+
+**Business-as-usual scenario (BAU)** was simulated according to the guidelines provided by Pascual-Arranz (2012) for the “Pinar Grande” study area, where both Scots pine and Maritime pine occur in both pure and mixed stands. This scenario includes a precommercial thinning at 20 years of stand age to establish the initial stand density after the natural regeneration, and two additional thinning from below at 40 and 60 years with intensities around 30–35% of stand basal area. The shelterwood method is applied at the end of the rotation period to facilitate natural regeneration.
+
+Three more scenarios focused on the production of one ecosystem service were defined according to the bibliography:
+
+A scenario focused on **wood production (WOOD)** to provide a larger amount of saw wood was simulated as well, using as a reference the silvicultural scenarios described by Del Río et al. (2006) and adapted to our species mixtures. Here, systematic thinning that preserving future trees is applied at different stand ages, reducing thinning intensity when increasing stand age and tree sizes. These interventions pursue the growth of a selected percentage of the bigger trees by extracting their neighbors, independently of the neighbor’s size. As a result, this scenario tries to reduce the target trees' competition while reaching higher stem dimensions.
+
+A scenario focused on **carbon sequestration (CARB)** was included using the silvicultural guidelines provided by Ruiz-Peinado et al. (2017). In this scenario, systematic thinning is conducted every 15 years, removing on average 20% of the stand basal area. The authors argue that such intensive thinning can promote tree growth and achieve higher carbon sequestration rates.
+
+Lastly, a scenario focused on **mushroom production (MUSH)** was also included using the guidelines detailed by Sánchez-González et al. (2019) and adapting them to the rotation period selected. This scenario is based on short intervention periods of 10 years aiming to extract the same amount of basal area produced during the previous 10-year period, thus opening the canopy cover and promoting mushroom fructification. To do that, systematic thinning interventions are applied every 10 years removing the incremental basal area of the last period (on average 20% of the stand basal area).
+
+To directly compare these scenarios in terms of production, a common rotation period was established at 120 years. 
+
+
+Have a look to the original publication for further details [***here***](https://doi.org/10.1007/s10342-024-01752-3).
+
+*Reference:*
+
+*Del Río M, López E, Montero G (2006) Manual de gestión para masas procedentes de repoblación de Pinus pinaster Ait., Pinus sylvestris L. y Pinus nigra Arn. en Castilla y León. Junta de Castilla y León, Castilla y León (España)*
+
+*Pascual-Arranz A (2012) Elaboración de un nuevo modelo selvícola de gestión en el monte Pinar Grande (Soria). Universidad de Valladolid*
+
+*Ruiz-Peinado R, Bravo Oviedo JA, López Senespleda E et al (2017) Forest management and carbon sequestration in the Mediterranean region: a review. For Syst 26:10*
+
+*Sánchez-González M, de-Miguel S, Martin-Pinto P, et al (2019) Yield models for predicting aboveground ectomycorrhizal fungal productivity in Pinus sylvestris and Pinus pinaster stands of northern Spain. For Ecosyst 6:52. https://doi.org/10.1186/s40663-019-0211-1*
+
+## Graphs for *P. sylvestris* x *P. pinaster* under 50–50 mixed conditions
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Density evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Density (trees/ha)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dominant height evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Dominant height (m)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "G", 
+               title = "Stand basal area evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Stand basal area (m²/ha)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+plots$g <- plots$G/plots$N *10000
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "g", 
+               title = "Average tree basal area evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Average tree basal area (cm²)")
+```
+
+*Note: Two lines are shown for each scenario. Solid lines represent the accumulated values (standing trees + dead trees + thinned trees), while dashed lines represent only the standing volume.*
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "V", 
+               title = "Volume over bark evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands", 
+               x = "Stand age (years)", y = "Volume over bark (m³/ha)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+plots$v_tree <- plots$V / plots$N * 1000
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "v_tree", 
+               title = "Average tree volume evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands", 
+               x = "Stand age (years)", y = "Volume over bark (dm³)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Carbon_total", 
+               title = "Evolution of standing carbon during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands", 
+               x = "Stand age (years)", y = "Total standing carbon (tn/ha)")
+```
+
+```{r, echo=FALSE, warning=FALSE}
+plots_mush <- plots[!is.na(plots$Edible_mushroom), ]
+graph_selector(df = plots_mush, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Edible_mushroom", 
+               title = "Annual edible mushroom production during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands", 
+               x = "Stand age (years)", y = "Edible mushroom (kg/ha/year)")
+```

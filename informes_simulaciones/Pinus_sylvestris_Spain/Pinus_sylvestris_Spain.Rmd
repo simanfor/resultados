@@ -1,0 +1,137 @@
+---
+title: "Using SIMANFOR to compare thinning regimes"
+subtitle: "An example of a young *Pinus sylvestris* pure stand in Spain"
+author: "Aitor Vázquez Veloso & Felipe Bravo Oviedo"
+date: "2025-10-20"
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
+  markdown:
+    wrap: sentence
+---
+
+```{r, echo=FALSE, message=FALSE}
+source('/home/aitor/Downloads/simanfor/functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+# install_and_load(c("tinytex", "rmarkdown", "knitr"))  # these libraries are necessary for the reports creation
+```
+
+```{r, echo=FALSE, message=FALSE}
+simulations_path <- '/home/aitor/Downloads/simanfor/Pinus_sylvestris_Spain/' 
+# list.files(simulations_path, full.names = TRUE)
+```
+
+```{r, echo=FALSE}
+lang <- "es"
+projection_time <- 5  
+save <- "yes"  
+output_path <- getwd()  
+
+plots <- load_plot_data(simulations_path, lang)
+```
+
+### Summary of thinning regimes
+
+- **Ps_control**: Natural growth from the initial stand age up to 150 years.
+- **Ps08**: Regular structure with a rotation period of 115–140 years (~50 cm). Selective thinning every 17–29 years, with a final density of 300 trees/ha. Regeneration occurs in three phases (*shelterwood system*).
+- **Ps11**: Regular structure with a rotation period of 120–150 years (~40 cm). Thinning from below every 11–24 years, with additional treatments such as pruning (*not simulated*), and a final density of 400 trees/ha. Regeneration occurs in three phases (*shelterwood system*).
+
+
+Refer to the original publication describing these thinning regimes [here](https://cpf.gencat.cat/web/.content/or_organismes/or04_centre_propietat_forestal/06-Publicacions/publicacions_tecniques/colleccions/orgest/models_de_gestio_forestal/orgest._models_de_gesti__per_als_boscos_de_pi_roig/docs/pi_roig.pdf).
+
+### Evolution of stand density
+
+A clear effect of natural mortality is observed, mainly in the control scenario, after 35 years of stand development, while lower mortality rates are recorded in the other scenarios. Each reduction in stand density results from thinning operations.
+
+```{r, echo=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Density evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Density (trees/ha)")
+```
+
+### Evolution of dominant height
+
+Higher dominant heights are recorded in the scenarios with thinning interventions compared to the control, highlighting the effects of thinning.
+
+```{r, echo=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dominant height evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Dominant height (m)")
+```
+
+### Evolution of stand basal area
+
+Higher stand basal area values are observed in the control scenario, although a clear reduction caused by natural mortality is also evident. Different thinning strategies are represented in the scenarios with interventions.
+
+```{r, echo=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "G", 
+               title = "Stand basal area evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Stand basal area (m²/ha)")
+```
+
+### Evolution of average tree basal area
+
+While the stand-level basal area is higher in the control scenario, individual trees are on average thinner due to the higher stand density. Thinning interventions lead to an increase in average tree basal area. In the thinning scenarios, average tree basal area increases over time, reaching similar values by the end of the simulation.
+
+```{r, echo=FALSE}
+plots$g <- plots$G/plots$N *10000
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "g", 
+               title = "Average tree basal area evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands",
+               x = "Stand age (years)", y = "Average tree basal area (cm²)")
+```
+
+### Evolution of stand volume
+
+
+Similar final volumes are observed across the thinning scenarios. When considering the accumulated values, these scenarios reach higher volumes due to the contribution of thinned trees. However, when examining only the standing volume, the control scenario shows higher values throughout the simulation, as no trees were removed, although clear losses occur due to natural mortality.
+
+*Note: Two lines are shown for each scenario. Solid lines represent the accumulated values (standing trees + dead trees + thinned trees), while dashed lines represent only the standing volume.*
+
+```{r, echo=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "V_con_corteza", 
+               title = "Volume over bark evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands", 
+               x = "Stand age (years)", y = "Volume over bark (m³/ha)")
+```
+
+### Evolution of average tree volume
+
+Bigger trees are observed in the thinning scenarios, with similar average volumes reached by the end of the simulation period.
+
+```{r, echo=FALSE}
+plots$v_tree <- plots$V_con_corteza / plots$N * 1000
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "v_tree", 
+               title = "Average tree volume evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands", 
+               x = "Stand age (years)", y = "Volume over bark (dm³)")
+```
+
+### Evolution of stand biomass
+
+Results are similar to those observed for stand volume. The accumulated biomass is higher in the thinning scenarios due to the contribution of thinned trees, while the standing biomass is higher in the control scenario throughout the simulation period.
+
+```{r, echo=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "WT", 
+               title = "Total biomass evolution during the simulation period", 
+               subtitle = "Pinus sylvestris stands", 
+               x = "Stand age (years)", y = "Biomass (t/ha)")
+```

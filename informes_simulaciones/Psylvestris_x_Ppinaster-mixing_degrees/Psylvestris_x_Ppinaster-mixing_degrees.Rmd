@@ -1,0 +1,109 @@
+---
+title: "Using SIMANFOR to compare different mixed stand degrees"
+author: "Aitor Vázquez Veloso & Felipe Bravo Oviedo"
+date: "2025-10-20"
+output:
+  pdf_document: default
+  html_document: default
+subtitle: An example on *Pinus sylvestris* x *Pinus pinaster* mixed stands in Spain
+editor_options:
+  markdown:
+    wrap: sentence
+---
+
+```{r, echo=FALSE, message=FALSE}
+source('/home/aitor/Downloads/simanfor/functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+# install_and_load(c("tinytex", "rmarkdown", "knitr"))  # these libraries are necessary for the reports creation
+```
+
+```{r, echo=FALSE, message=FALSE}
+simulations_path <- '/home/aitor/Downloads/simanfor/Psylvestris_x_Ppinaster-mixing_degrees/BAU-mixtures/' 
+# list.files(simulations_path, full.names = TRUE)
+```
+
+```{r, echo=FALSE}
+lang <- "en"
+projection_time <- 5  
+save <- "yes"  
+output_path <- getwd()  
+
+plots <- load_plot_data(simulations_path, lang)
+```
+
+### Summary of thinning regimes
+
+**Business-as-usual scenario (BAU)** was simulated according to the guidelines provided by Pascual-Arranz (2012) for the “Pinar Grande” study area, where both Scots pine (*P. sylvestris*) and Maritime pine (*P. pinaster*) occur in both pure and mixed stands. This scenario includes a precommercial thinning at 20 years of stand age to establish the initial stand density after the natural regeneration, and two additional thinning from below at 40 and 60 years with intensities around 30–35% of stand basal area. The shelterwood method is applied at the end of the rotation period to facilitate natural regeneration.
+
+
+Have a look to the original publication for further details [***here***](https://doi.org/10.1007/s10342-024-01752-3).
+
+*Reference:*
+
+*Pascual-Arranz A (2012) Elaboración de un nuevo modelo selvícola de gestión en el monte Pinar Grande (Soria). Universidad de Valladolid*
+
+
+## Graphs for BAU scenario among different *P. sylvesitrs* x *P. pinaster* mixture gradients
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Density evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Density (trees/ha)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dominant height evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Dominant height (m)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "G", 
+               title = "Stand basal area evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Stand basal area (m²/ha)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+plots$g <- plots$G/plots$N *10000
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "g", 
+               title = "Average tree basal area evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands",
+               x = "Stand age (years)", y = "Average tree basal area (cm²)")
+```
+
+*Note: Two lines are shown for each scenario. Solid lines represent the accumulated values (standing trees + dead trees + thinned trees), while dashed lines represent only the standing volume.*
+
+```{r, echo=FALSE, warning=FALSE}
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "V", 
+               title = "Volume over bark evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands", 
+               x = "Stand age (years)", y = "Volume over bark (m³/ha)")
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+plots$v_tree <- plots$V / plots$N * 1000
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path, 
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "v_tree", 
+               title = "Average tree volume evolution during the simulation period", 
+               subtitle = "Pinus sylvestris X P. pinaster stands", 
+               x = "Stand age (years)", y = "Volume over bark (dm³)")
+```
