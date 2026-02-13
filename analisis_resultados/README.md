@@ -15,6 +15,10 @@
 - :computer: :es: **comparativa_simulaciones_SIMANFOR.Rmd** es el código que necesitas con explicaciones en español (tienes una vista previa en el archivo *.html*)
 - :computer: 🇬🇧 **SIMANFOR_simulations_comparison.Rmd** is the code you need with explanations in English (you have a preview in the *.html* file)
 
+:bulb: Si ya tienes conocimientos más avanzados en R y buscas hacer un informe más profesional, entonces utiliza esta plantilla para informes:
+- :es: [plantilla para informes en español](./../informes_simulaciones/plantilla_informe_espanol/)
+- 🇬🇧 [English report template](./../informes_simulaciones/report_template_english/)
+
 #### :video_camera: Echa un vistazo a la lista de reproducción de YouTube, tenemos un vídeo explicando cómo utilizar este código
 
 :brain: Si necesitas ayuda con R, en este [repositorio](https://github.com/VirtualForests/cheatsheets) encontrarás información de ayuda, como una [cheatsheet básica](https://github.com/VirtualForests/cheatsheets/blob/main/R_basico.pdf) sobre R y RStudio, cómo hacer [cálculos de árbol](https://github.com/VirtualForests/cheatsheets/blob/main/R_arbol_individual.pdf) y [cálculos de masa](https://github.com/VirtualForests/cheatsheets/blob/main/R_masa.pdf) en R, e incluso un [script con datos de ejemplo](https://github.com/VirtualForests/cheatsheets/tree/main/R) para hacerlo tú mismo.

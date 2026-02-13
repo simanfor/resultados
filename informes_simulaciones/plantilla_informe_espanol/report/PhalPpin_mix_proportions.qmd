@@ -1,0 +1,432 @@
+---
+title: "Ejemplo de informe de simulación selvícola con SIMANFOR (español)"
+subtitle: "Efectos de mezcla de especies: Pinus halepensis x Pinus pinaster"
+author: "Aitor Vázquez Veloso"
+date: "2026-02-13"
+# lang: es  # just on html
+format: 
+  # html:
+  #   toc: true  # table content in the html output
+  #   code-fold: true
+  pdf:
+    toc: true  # activate index in the pdf output
+    toc-depth: 3  # subsection level (###)
+    toc-title: "Índice"  # index title
+    geometry: "a4paper"  # paper size
+    latex-engine: xelatex  # xelatex is a LaTeX recommended engine for better font support
+    # mainfont: "DejaVu Sans"  # prevent font issues in PDF output; you can choose another font if you prefer
+execute:
+  echo: false  # visualize code
+  warning: false  # general warnings
+  message: false  # package warnings
+  eval: true  # run code
+---
+
+<!-- Notes for users: -->
+
+<!-- This is an "advanced" template for summarizing the results of SIMANFOR simulations. If you are not familiar with R and R Markdown, you may find it a bit overwhelming at first. I recommend you to start with the "basic" template, which is simpler and easier to understand. You can find it here (both Spanish and English): https://github.com/simanfor/resultados/tree/main/analisis_resultados -->
+
+<!-- This report has some content that must be adapted to each specific study. To do that, please review the TODOs that are included in the document. They are located in the sections that require editing or rewriting, and they are clearly marked with "TODO" for easy identification. -->
+
+<!-- This template is adapted to be compiled both in HTML and PDF, check the header of the document for the format options.  -->
+<!-- If you want to compile it in HTML, make sure you have the necessary R packages installed.  -->
+<!-- If you want to compile it in PDF, make sure you have the necessary LaTeX packages installed. You can use the following command in your terminal (Linux) to install them: -->
+<!-- sudo apt update -->
+<!-- sudo apt install \ -->
+<!--    texlive-latex-recommended \ -->
+<!--    texlive-latex-extra \ -->
+<!--    texlive-fonts-recommended \ -->
+<!--    texlive-xetex \ -->
+<!--    latexmk -->
+
+
+
+<!-- LET'S START! -->
+
+```{r setup}
+wd_path <- 'plantilla_informe_espanol/'
+
+knitr::opts_knit$set(root.dir = wd_path)
+
+# check path and folder content
+# getwd() 
+# list.files() 
+rm(wd_path)
+```
+
+```{r load libraries}
+source('report/functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+install_and_load(c("knitr", "kableExtra"))
+```
+
+```{r simanfor outputs path}
+simulations_path <- 'plantilla_informe_espanol' 
+# list.files(simulations_path, full.names = TRUE)  # check files
+```
+
+<!-- Configure the following variables: -->
+
+<!-- -   *lang* = **Language of the results obtained from SIMANFOR:** `es` (Spanish) or `en` (English) -->
+<!-- -   *projection_time* = **Model projection time:** See [model documentation](https://github.com/simanfor/modelos)  -->
+<!-- or check the [SIMANFOR website](https://www.simanfor.es/models) -->
+<!-- -   *save* = **Do you want to save the graphs you will create?** `yes` or `no` -->
+<!-- -   *output_path* = **Graph output path:** Folder where generated graphs will be saved (default is the working directory) -->
+
+```{r setup parameters}
+lang <- "es"
+projection_time <- 5  
+save <- "yes"  
+output_path <- paste(getwd(), "/report/graphs/", sep="")
+graph_subtitle <- "Comparativa de proporciones de mezcla"
+
+plots <- load_plot_data(simulations_path, lang)
+# plots <- plots[plots$Accion != "Carga Inicial", ]  # removing initial load action
+```
+
+<!-- change page to isolate index from the rest of the content -->
+{{< pagebreak >}}
+
+# Descripción de las masas inventariadas
+
+<!-- # TODO: check species name, location and further details in the following explanation -->
+<!-- # TODO: check is all the variables included in the code are available in our outputs -->
+
+Las masas objeto de estudio con masas mixtas de *Pinus halepensis* y *Pinus pinaster* en distintas proporciones de mezcla. 
+<!-- localizadas en los alrededores de Brañosera (Palencia, España).  -->
+Las variables de masa más importantes se resumen en la siguiente tabla:
+
+```{r clean table initial inventory}
+# considering just one initial inventory
+initial_inventory <- plots %>%
+  filter(Accion == "Inicialización") %>%
+  # TODO: more variables to add/remove?
+  select(ID_Parcela, T, 
+         N, dg, G, 
+         Ho, 
+         V_con_corteza, WA, Carbono_total) %>% 
+  distinct()
+
+# show a clean table in the output
+kable(
+  initial_inventory,
+  format    = "latex",  # this option is displayed both in html and pdf
+  booktabs  = TRUE,  # clean lines
+  align     = "c",  # centre columns
+  col.names = c(
+    # TODO: more variables to add/remove?
+    "ID", "T (años)",
+    "N (pies/ha)", "dg (cm)", "G (m2/ha)", 
+    "Ho (m)", 
+    "V (m3/ha)", "Wa (t/ha)", "C (t/ha)"
+  ),
+  digits    = 2              # decimals
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"),  # don't move table position and add striping for better readability; scale for fitting in page
+    full_width = FALSE
+  )
+```
+
+donde:
+
+- *ID* es el identificador de la parcela
+- *T* es la edad promedio de la masa (años)
+- *N* es la densidad de la masa (pies/ha)
+- *dg* es el diámetro medio cuadrático de la masa (cm)
+- *G* es el área basimétrica de la masa (m²/ha)
+- *Ho* es la altura dominante de la masa (m)
+- *V* es el volumen de la masa (m³/ha)
+- *Wa* es la biomasa aérea de la masa (t/ha)
+- *C* es el stock total de carbono de la masa, incluyendo raíces (t/ha)
+
+---
+
+# Resumen de los itinerarios selvícolas
+
+<!-- # TODO: consider to include a short silvicultural summary, for example: -->
+
+<!-- Se simularon los siguientes escenarios selvícolas: -->
+
+<!-- - **REF**: Crecimiento natural desde la edad inicial de la masa hasta el horizonte de simulación. -->
+
+<!-- - **BAU**: Escenario de gestión forestal convencional (*Business as usual*). Detalles: -->
+
+<!--     - *Enfoque*: Intervenciones moderadas, principalmente a través de aclareos sistemáticos, con el objetivo de mantener la salud y la productividad de la masa. -->
+<!--     - *Tipos de corta*: Aclareos sistemáticos, con una intensidad moderada (30-50% del área basimétrica) y un enfoque en la eliminación de árboles de menor calidad. -->
+<!--     - *Edad de rotación*: 110 años. -->
+
+Los itinerarios selvícolas utilizados en las simulaciones se resumen en la siguiente tabla:
+
+<!-- # TODO: check columns to include/exclude in the table -->
+<!-- # TODO: rename scenarios -->
+<!-- TODO: revise variables -->
+
+```{r silviculture summary}
+# considering just one initial inventory
+scenarios <- plots %>%
+  # TODO: check columns to include/exclude in the table
+  select("Nombre_archivo_escenario", "Anho", "T", 
+         "Accion", "Tipo_de_corta", "Criterio_de_corta", "Intensidad_de_corta", "Arboles_porvenir"
+         # , "Especies_a_cortar",  "Objetivo_intensidad_de_corta"   
+         ) %>%  
+  distinct()
+
+# rename scenarios
+scenarios$Nombre_archivo_escenario <- recode(scenarios$Nombre_archivo_escenario,
+                                             # TODO: rename scenarios
+                                             "PhalPpin_mix_proportions.json" = "control"
+)
+
+scenarios <- scenarios %>%  # just the last projection action to save space
+  group_by(Nombre_archivo_escenario) %>%
+  filter(
+    Accion != "Ejecución" | (Accion == "Ejecución" & T == max(T))
+  ) %>%
+  ungroup()
+
+# show a clean table in the output
+kable(
+  scenarios,
+  format    = "latex",  # this option is displayed both in html and pdf
+  booktabs  = TRUE,          # clean lines
+  align     = "c",           # center columns
+  col.names = c(
+    # TODO: more variables to add/remove?
+    "Escenario", "Año", "T", 
+    "Acción", "Tipo de corta", "Criterio de corta", "Intensidad de corta", "Árboles de porvenir"
+    # "Especies a cortar", "Objetivo intensidad de corta"
+  )
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"),  # don't move table position and add striping for better readability; scale for fitting in page
+    full_width = FALSE
+  )
+```
+
+donde:
+
+- *Escenario*: Nombre del itinerario selvícola simulado
+- *Año*: Año de la simulación
+- *T*: Edad de la masa tras la actuación (años)
+- *Acción*: Tipo de actuación realizada:
+
+  <!-- - *Carga inicial*: Inventario inicial -->
+  - *Ejecución*: Crecimiento de la masa sin intervenciones (*nótese que solo se incluyó la última ejecución en la tabla para ahorrar espacio*)
+  - *Corta*: Operación de corta (*ver detalles más abajo*)
+
+- *Tipo de corta*: Tipo de corta aplicada (sistemática, por lo bajo, por lo alto)
+- *Criterio de corta*: Criterio utilizado para seleccionar los árboles a extraer (densidad, área basimétrica, volumen)
+- *Intensidad de corta*: Severidad de la operación de corta (de 0 a 100%)
+- *Árboles de porvenir*: Árboles de futuro o árboles seleccionados para la corta final (de 0 a 100%)
+<!-- - *Especies a cortar*: Especies seleccionadas para la corta (si se aplicó una corta selectiva por especie) -->
+<!-- - *Objetivo intensidad de corta*: Valor sobre el que se calcula la intensidad de corta si se aplicó una corta selectiva por especie (cálculo a partir de valores de parcela o especie) -->
+
+<!-- TODO: include sources if needed -->
+
+<!--
+Refer to the original publication describing these thinning regimes [here](https://cpf.gencat.cat/web/.content/or_organismes/or04_centre_propietat_forestal/06-Publicacions/publicacions_tecniques/colleccions/orgest/models_de_gestio_forestal/orgest._models_de_gesti__per_als_boscos_de_pi_roig/docs/pi_roig.pdf).
+-->
+
+---
+
+# Modelos de simulación y detalles de la plataforma
+
+<!-- TODO: change model used, see this repository for more details: https://github.com/simanfor/modelos -->
+
+Las simulaciones se llevaron a cabo utilizando la plataforma SIMANFOR (Bravo et al., 2005; disponible en [www.simanfor.es](www.simanfor.es)). Entre los modelos disponibles en la plataforma, se utilizó el 
+<!-- change model here: -->
+*modelo de Masas mixtas de España*. 
+Puedes consultar más detalles en este [enlace](https://github.com/simanfor/modelos/blob/main/espanol/lista_detalle_modelos.md).
+
+*Referencias:*
+
+*Bravo, F., Ordóñez, C., Vázquez-Veloso, A., Michalakopoulos, S., 2025. SIMANFOR cloud Decision Support System: Structure, content, and applications. Ecological Modelling 499, 110912. [https://doi.org/10.1016/j.ecolmodel.2024.110912](https://doi.org/10.1016/j.ecolmodel.2024.110912)*
+
+---
+
+# ¿Cómo interpretar las simulaciones?
+
+SIMANFOR es una plataforma que permite realizar simulaciones selvícolas flexibles y adaptadas a las necesidades de cada usuario. Para ello, incorpora modelos empíricos (desarrollados a partir de datos reales) para estimar el crecimiento, la mortalidad, el volumen, la biomasa y los diversos tipos de información aquí resumidos, todo ello adaptado a cada especie y a sus condiciones ambientales. No obstante, estos modelos predictivos están sujetos a error, lo que significa que sus resultados deben interpretarse como una referencia y no como una verdad absoluta. Es importante tener en cuenta que, a medida que aumenta el horizonte de la simulación, los errores potenciales también se incrementan, debido simplemente a su efecto acumulativo.
+
+Dicho esto, los valores específicos mostrados en las figuras y tablas deben interpretarse con cautela; sin embargo, las tendencias generales y las comparaciones entre escenarios son más fiables y útiles para comprender el comportamiento de la masa bajo diferentes intervenciones selvícolas y para apoyar la toma de decisiones informada.
+
+En el repositorio de SIMANFOR puede encontrar todas las publicaciones en las que se ha utilizado esta herramienta. Échale un vistazo [aquí](https://github.com//simanfor/publicaciones).
+
+---
+
+# Resultados cuantitativos al final de la simulación
+
+<!-- # TODO: adapt this section; include/exclude variables if needed -->
+
+Las variables de la masa promedio más importantes al final de la simulación se resumen en la siguiente tabla:
+
+```{r final inventory}
+# should be a better way to do this
+avg_df_ho <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = 'Ho', lang = lang)
+avg_df_ho <- rename(avg_df_ho, Ho = y_axis_var)
+
+avg_df_g <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "G", lang = lang)
+avg_df_g <- rename(avg_df_g, G = y_axis_var)
+
+avg_df_dg <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "dg", lang = lang)
+avg_df_dg <- rename(avg_df_dg, dg = y_axis_var)
+
+avg_df_n <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "N", lang = lang)
+avg_df_n <- rename(avg_df_n, N = y_axis_var)
+
+avg_df_v <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "V_con_corteza", lang = lang)
+avg_df_v <- rename(avg_df_v, V_con_corteza = y_axis_var)
+
+avg_df_w <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "WA", lang = lang)
+avg_df_w <- rename(avg_df_w, WA = y_axis_var)
+
+avg_df_c <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "Carbono_total", lang = lang)
+avg_df_c <- rename(avg_df_c, Carbono_total = y_axis_var)
+
+combined_avg_df <- merge(avg_df_ho, avg_df_g, by = c("folder_name", "T", "Accion"))
+combined_avg_df <- merge(combined_avg_df, avg_df_dg, by = c("folder_name", "T", "Accion"))
+combined_avg_df <- merge(combined_avg_df, avg_df_n, by = c("folder_name", "T", "Accion"))
+combined_avg_df <- merge(combined_avg_df, avg_df_v, by = c("folder_name", "T", "Accion"))
+combined_avg_df <- merge(combined_avg_df, avg_df_w, by = c("folder_name", "T", "Accion"))
+combined_avg_df <- merge(combined_avg_df, avg_df_c, by = c("folder_name", "T", "Accion"))
+combined_avg_df <- combined_avg_df %>%
+  filter(T == max(T)) %>%
+  select(folder_name, N, dg, G, Ho, V_con_corteza, WA, Carbono_total) %>%
+  rename(Escenario = folder_name)
+
+# show a clean table in the output
+kable(
+  combined_avg_df,
+  format    = "latex",  # this option is displayed both in html and pdf
+  booktabs  = TRUE,          # clean lines
+  align     = "c",           # center columns
+  col.names = c(
+    # TODO: more variables to add/remove?
+    "Escenario", #"T (años)",
+    "N (pies/ha)", "dg (cm)", "G (m2/ha)", 
+    "Ho (m)", 
+    "V (m3/ha)", "Wa (t/ha)", "C (t/ha)"
+  ),
+  digits    = 2              # decimals
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"),  # don't move table position and add striping for better readability; scale for fitting in page
+    full_width = FALSE
+  )
+
+# remove intermediate dataframes
+rm(avg_df_ho, avg_df_g, avg_df_dg, avg_df_n, avg_df_v, avg_df_w, avg_df_c, combined_avg_df)
+```
+
+---
+
+# Resultados gráficos
+
+A partir de las simulaciones realizadas, se han generado los siguientes resultados gráficos para comparar las diferentes alternativas selvícolas consideradas.
+
+## Comparativa de alternativas selvícolas: variables básicas
+
+<!-- # TODO: include general description -->
+
+```{r basic variables graphs}
+# density
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Dinámica de la densidad", 
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Densidad (pies/ha)")
+
+# stand basal area
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "G", 
+               title = "Dinámica del área basimétrica", 
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Área basimétrica (m²/ha)")
+
+# average tree basal area
+plots$g_tree <- plots$G / plots$N  # m²
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "g_tree", 
+               title = "Dinámica del área basimétrica del árbol promedio", 
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Área basimétrica (m²)")
+
+# dominant height
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dinámica de la altura dominante", 
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Altura dominante (m)")
+```
+
+
+## Comparativa de alternativas selvícolas: volumen de madera
+
+<!-- # TODO: include general description -->
+
+*Nota: Se muestran dos líneas para cada escenario. Las líneas continuas representan los valores acumulados (árboles en pie + árboles muertos + árboles extraídos por corta), mientras que las líneas discontinuas representan únicamente la madera en pie.*
+
+```{r volume graphs}
+# stand volume
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+               save = save, output_path = output_path,
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "V_con_corteza",
+               title = "Dinámica del volumen con corteza",
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Volumen (m³/ha)")
+
+# average tree volume
+plots$v_tree <- plots$V_con_corteza / plots$N * 1000
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "v_tree",
+               title = "Dinámica del volumen con corteza del árbol promedio",
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Volumen (dm³)")
+```
+
+## Comparativa de alternativas selvícolas: biomasa y carbono
+
+<!-- # TODO: include general description -->
+
+
+*Nota: la biomasa representada hace referencia a la parte aérea (tronco, ramas y hojas), excluyendo las raíces, mientras que el carbono secuestrado hace referencia al total del árbol.*
+
+*Nota: Se muestran dos líneas para cada escenario. Las líneas continuas representan los valores acumulados (árboles en pie + árboles muertos + árboles extraídos por corta), mientras que las líneas discontinuas representan únicamente la madera en pie.*
+
+```{r biomass and carbon graphs}
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+              save = save, output_path = output_path,
+              graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "WA",
+              title = "Dinámica de la biomasa aérea",
+              subtitle = graph_subtitle,
+              x = "Edad de la masa (años)", y = "Biomasa (t/ha)")
+
+# average tree biomass
+plots$wt_tree <- plots$WT / plots$N
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "wt_tree",
+               title = "Dinámica de la biomasa aérea del árbol promedio",
+               subtitle = graph_subtitle,
+               x = "Edad de la masa (años)", y = "Biomasa (t)")
+
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+              save = save, output_path = output_path,
+              graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "Carbono_total",
+              title = "Dinámica del carbono total",
+              subtitle = graph_subtitle,
+              x = "Edad de la masa (años)", y = "Biomasa (t/ha)")
+```
+
+
+<!-- ## Silvicultural alternatives comparison: other ecosystem services -->
+
+<!-- # TODO: include general description -->
+
+<!-- TODO: copy and paste a code section here to generate additional graphs if needed -->

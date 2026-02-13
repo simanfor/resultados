@@ -1,0 +1,442 @@
+---
+title: "Example of silvicultural simulation report with SIMANFOR (English)"
+subtitle: "Different thinning approaches in a Pinus halepensis x Pinus pinaster mixed stand"
+author: "Aitor Vázquez Veloso"
+date: "2026-02-13"
+# lang: es  # just on html
+format: 
+  # html:
+  #   toc: true  # table content in the html output
+  #   code-fold: true
+  pdf:
+    toc: true  # activate index in the pdf output
+    toc-depth: 3  # subsection level (###)
+    toc-title: "Index"  # index title
+    geometry: "a4paper"  # paper size
+    latex-engine: xelatex  # xelatex is a LaTeX recommended engine for better font support
+    # mainfont: "DejaVu Sans"  # prevent font issues in PDF output; you can choose another font if you prefer
+execute:
+  echo: false  # visualize code
+  warning: false  # general warnings
+  message: false  # package warnings
+  eval: true  # run code
+---
+
+<!-- Notes for users: -->
+
+<!-- This is an "advanced" template for summarizing the results of SIMANFOR simulations. If you are not familiar with R and R Markdown, you may find it a bit overwhelming at first. I recommend you to start with the "basic" template, which is simpler and easier to understand. You can find it here (both Spanish and English): https://github.com/simanfor/resultados/tree/main/analisis_resultados -->
+
+<!-- This report has some content that must be adapted to each specific study. To do that, please review the TODOs that are included in the document. They are located in the sections that require editing or rewriting, and they are clearly marked with "TODO" for easy identification. -->
+
+<!-- This template is adapted to be compiled both in HTML and PDF, check the header of the document for the format options.  -->
+<!-- If you want to compile it in HTML, make sure you have the necessary R packages installed.  -->
+<!-- If you want to compile it in PDF, make sure you have the necessary LaTeX packages installed. You can use the following command in your terminal (Linux) to install them: -->
+<!-- sudo apt update -->
+<!-- sudo apt install \ -->
+<!--    texlive-latex-recommended \ -->
+<!--    texlive-latex-extra \ -->
+<!--    texlive-fonts-recommended \ -->
+<!--    texlive-xetex \ -->
+<!--    latexmk -->
+
+
+
+<!-- LET'S START! -->
+
+```{r setup}
+wd_path <- 'report_template_english/'
+
+knitr::opts_knit$set(root.dir = wd_path)
+
+# check path and folder content
+# getwd() 
+# list.files() 
+rm(wd_path)
+```
+
+```{r load libraries}
+source('report/functions.r')
+install_and_load(c("readxl", "tidyverse", "ggplot2", "viridis"))
+install_and_load(c("knitr", "kableExtra"))
+```
+
+```{r simanfor outputs path}
+simulations_path <- 'report_template_english/' 
+# list.files(simulations_path, full.names = TRUE)  # check files
+```
+
+<!-- Configure the following variables: -->
+
+<!-- -   *lang* = **Language of the results obtained from SIMANFOR:** `es` (Spanish) or `en` (English) -->
+<!-- -   *projection_time* = **Model projection time:** See [model documentation](https://github.com/simanfor/modelos)  -->
+<!-- or check the [SIMANFOR website](https://www.simanfor.es/models) -->
+<!-- -   *save* = **Do you want to save the graphs you will create?** `yes` or `no` -->
+<!-- -   *output_path* = **Graph output path:** Folder where generated graphs will be saved (default is the working directory) -->
+
+```{r setup parameters}
+lang <- "en"
+projection_time <- 5  
+save <- "yes"  
+output_path <- paste(getwd(), "/report/graphs_en/", sep="")
+graph_subtitle <- "Thinning approaches comparison"
+
+plots <- load_plot_data(simulations_path, lang)
+# plots <- plots[plots$Accion != "Initial load", ]  # removing initial load action
+```
+
+<!-- change page to isolate index from the rest of the content -->
+{{< pagebreak >}}
+
+# Inventoried stands description
+
+<!-- # TODO: check species name, location and further details in the following explanation -->
+<!-- # TODO: check is all the variables included in the code are available in our outputs -->
+
+The stands under study are mixed stands of *Pinus halepensis* and *Pinus pinaster*. 
+<!-- located in (Palencia, Spain).  -->
+
+The most important stand variables are summarized in the following table:
+
+
+```{r clean table initial inventory}
+# considering just one initial inventory
+initial_inventory <- plots %>%
+  filter(Action == "Initialization") %>%
+  # TODO: more variables to add/remove?
+  select(Plot_ID, T, 
+         N, dg, G, 
+         Ho, 
+         V, WA, Carbon_total) %>% 
+  distinct()
+
+# show a clean table in the output
+kable(
+  initial_inventory,
+  format    = "latex",  # this option is displayed both in html and pdf
+  booktabs  = TRUE,  # clean lines
+  align     = "c",  # centre columns
+  col.names = c(
+    # TODO: more variables to add/remove?
+    "ID", "T (years)",
+    "N (trees/ha)", "dg (cm)", "G (m2/ha)", 
+    "Ho (m)", 
+    "V (m3/ha)", "Wa (t/ha)", "C (t/ha)"
+  ),
+  digits    = 2              # decimals
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"),  # don't move table position and add striping for better readability; scale for fitting in page
+    full_width = FALSE
+  )
+```
+
+where:
+
+- *T* is the average stand age (years)
+- *N* is the stand density (trees/ha)
+- *dg* is the quadratic mean diameter (cm)
+- *G* is the stand basal area (m²/ha)
+- *Ho* is the dominant height (m)
+- *V* is the stand volume over bark (m³/ha)
+- *Wa* is the stand aerial biomass (t/ha)
+- *C* is the stand carbon stock including roots (t/ha)
+
+---
+
+# Summary of thinning regimes
+
+<!-- # TODO: consider to include a short silvicultural summary, for example: -->
+
+<!-- Se simularon los siguientes escenarios selvícolas: -->
+
+<!-- - **REF**: Crecimiento natural desde la edad inicial de la masa hasta el horizonte de simulación. -->
+
+<!-- - **BAU**: Escenario de gestión forestal convencional (*Business as usual*). Detalles: -->
+
+<!--     - *Enfoque*: Intervenciones moderadas, principalmente a través de aclareos sistemáticos, con el objetivo de mantener la salud y la productividad de la masa. -->
+<!--     - *Tipos de corta*: Aclareos sistemáticos, con una intensidad moderada (30-50% del área basimétrica) y un enfoque en la eliminación de árboles de menor calidad. -->
+<!--     - *Edad de rotación*: 110 años. -->
+
+Four thinning regimes were simulated:
+
+- **control**: Natural growth from the initial stand age to the simulation horizon, without any thinning intervention.
+- **above**: Thinning from above with a low intensity (15% of basal area).
+- **below**: Thinning from below with a low intensity (15% of basal area).
+- **systematic**: Systematic thinning with a low intensity (15% of basal area).
+
+The thinning regimes used in the simulations are summarized in the following table:
+
+<!-- # TODO: check columns to include/exclude in the table -->
+<!-- # TODO: rename scenarios -->
+<!-- TODO: revise variables -->
+
+```{r silviculture summary}
+# considering just one initial inventory
+scenarios <- plots %>%
+  # TODO: check columns to include/exclude in the table
+  select("Scenario_file_name", "Year", "T", 
+         "Action", "Harvest_type", "Harvest_criteria", "Harvest_severity", "Trees_to_preserve"
+         # , "Species_to_harvest",  "Harvest_severity_target"   
+         ) %>%  
+  distinct()
+
+# rename scenarios
+scenarios$Scenario_file_name <- recode(scenarios$Scenario_file_name,
+                                      # TODO: rename scenarios
+                                      "PhalPpin_mix_silviculture_above.json" = "above",
+                                      "PhalPpin_mix_silviculture_below.json" = "below",
+                                      "PhalPpin_mix_silviculture_control.json" = "control",
+                                      "PhalPpin_mix_silviculture_systematic.json" = "systematic",
+)
+
+scenarios <- scenarios %>%  # just the last projection action to save space
+  group_by(Scenario_file_name) %>%
+  filter(
+    Action != "Execution" | (Action == "Execution" & T == max(T))
+  ) %>%
+  ungroup()
+
+# show a clean table in the output
+kable(
+  scenarios,
+  format    = "latex",  # this option is displayed both in html and pdf
+  booktabs  = TRUE,          # clean lines
+  align     = "c",           # center columns
+  col.names = c(
+    # TODO: more variables to add/remove?
+    "Scenario", "Year", "T", 
+    "Action", "Harvest type", "Harvest criteria", "Harvest severity", "Future trees"
+    # "Species to harvest", "Harvest severity target"
+  )
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"),  # don't move table position and add striping for better readability; scale for fitting in page
+    full_width = FALSE
+  )
+```
+
+where:
+
+- *Scenario*: Name of the thinning regime
+- *Year*: Year of the simulation
+- *T*: Stand age after the action (year)
+- *Action*: Type of action performed:
+
+  <!-- - *Initial load*: Initial inventory -->
+  - *Execution*: Stand growth without interventions (*notice that just the last execution was included in the table to save space*)
+  - *Thinning*: Thinning operation (see below for details)
+
+- *Thinning type*: Type of thinning applied (systematic, from below, from above)
+- *Thinning criteria*: Criteria used for selecting trees to be thinned (density, basal area, volume)
+- *Thinning severity*: Severity of the thinning operation (from 0 to 100%)
+- *Future trees*: Future trees or trees selected for the final cut (from 0 to 100%)
+<!-- - *Species to harvest*: Species selected for harvesting (if a species-specific selective thinning was applied) -->
+<!-- - *Thinning severity target*: Value used to calculate the thinning severity if a species-specific selective thinning was applied (calculated based on plot or species values) -->
+
+<!-- TODO: include sources if needed -->
+
+<!--
+Refer to the original publication describing these thinning regimes [here](https://cpf.gencat.cat/web/.content/or_organismes/or04_centre_propietat_forestal/06-Publicacions/publicacions_tecniques/colleccions/orgest/models_de_gestio_forestal/orgest._models_de_gesti__per_als_boscos_de_pi_roig/docs/pi_roig.pdf).
+-->
+
+---
+
+# Simulation models and platform details
+
+<!-- TODO: change model used, see this repository for more details: https://github.com/simanfor/modelos -->
+
+Simulations were carried out using the SIMANFOR platform (Bravo et al., 2005; available at [www.simanfor.es](www.simanfor.es)). Among the available models in the platform, 
+<!-- change model here: -->
+the *"modelo de Masas mixtas de España"* was used. 
+See more details in this [link](https://github.com/simanfor/modelos/blob/main/espanol/lista_detalle_modelos.md).
+
+*References:*
+
+*Bravo, F., Ordóñez, C., Vázquez-Veloso, A., Michalakopoulos, S., 2025. SIMANFOR cloud Decision Support System: Structure, content, and applications. Ecological Modelling 499, 110912. [https://doi.org/10.1016/j.ecolmodel.2024.110912](https://doi.org/10.1016/j.ecolmodel.2024.110912)*
+
+---
+
+# How to interpret simulations?
+
+SIMANFOR is a platform that enables flexible silvicultural simulations tailored to the needs of each user. To achieve this, it incorporates empirical models (developed from real data) to estimate growth, mortality, volume, biomass, and the various types of information summarized here, all adapted to each species and its environmental conditions. However, these predictive models are subject to error, meaning that their outputs should be interpreted as a reference rather than an absolute truth. It is important to note that, as the simulation horizon increases, the potential errors also become larger, simply due to their cumulative effect.
+
+Having said that, the specific values shown in the figures and tables should be interpreted with caution; nonetheless, the general trends and the comparisons between scenarios are more reliable and useful for understanding stand behaviour under different silvicultural interventions and for supporting informed decision-making.
+
+In the SIMANFOR repository, you can find all the publications where this tool has been used. Have a look here: [https://github.com//simanfor/publicaciones](https://github.com//simanfor/publicaciones)
+
+---
+
+# Quantitative results at the end of the simulation
+
+<!-- # TODO: adapt this section; include/exclude variables if needed -->
+
+The most important average stand variables at the end of the simulation are summarized in the following table:
+
+```{r final inventory}
+# should be a better way to do this
+avg_df_ho <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = 'Ho', lang = lang)
+avg_df_ho <- rename(avg_df_ho, Ho = y_axis_var)
+
+avg_df_g <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "G", lang = lang)
+avg_df_g <- rename(avg_df_g, G = y_axis_var)
+
+avg_df_dg <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "dg", lang = lang)
+avg_df_dg <- rename(avg_df_dg, dg = y_axis_var)
+
+avg_df_n <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "N", lang = lang)
+avg_df_n <- rename(avg_df_n, N = y_axis_var)
+
+avg_df_v <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "V", lang = lang)
+avg_df_v <- rename(avg_df_v, V = y_axis_var)
+
+avg_df_w <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "WA", lang = lang)
+avg_df_w <- rename(avg_df_w, WA = y_axis_var)
+
+avg_df_c <- get_avg_df(df = plots, grouped_x_axis_var = "T", y_axis_var = "Carbon_total", lang = lang)
+avg_df_c <- rename(avg_df_c, Carbon_total = y_axis_var)
+
+combined_avg_df <- merge(avg_df_ho, avg_df_g, by = c("folder_name", "T", "Action"))
+combined_avg_df <- merge(combined_avg_df, avg_df_dg, by = c("folder_name", "T", "Action"))
+combined_avg_df <- merge(combined_avg_df, avg_df_n, by = c("folder_name", "T", "Action"))
+combined_avg_df <- merge(combined_avg_df, avg_df_v, by = c("folder_name", "T", "Action"))
+combined_avg_df <- merge(combined_avg_df, avg_df_w, by = c("folder_name", "T", "Action"))
+combined_avg_df <- merge(combined_avg_df, avg_df_c, by = c("folder_name", "T", "Action"))
+combined_avg_df <- combined_avg_df %>%
+  filter(T == max(T)) %>%
+  select(folder_name, N, dg, G, Ho, V, WA, Carbon_total) %>%
+  rename(Scenario = folder_name)
+
+# show a clean table in the output
+kable(
+  combined_avg_df,
+  format    = "latex",  # this option is displayed both in html and pdf
+  booktabs  = TRUE,          # clean lines
+  align     = "c",           # center columns
+  col.names = c(
+    # TODO: more variables to add/remove?
+    "Scenario", #"T (años)",
+    "N (trees/ha)", "dg (cm)", "G (m2/ha)", 
+    "Ho (m)", 
+    "V (m3/ha)", "Wa (t/ha)", "C (t/ha)"
+  ),
+  digits    = 2              # decimals
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"),  # don't move table position and add striping for better readability; scale for fitting in page
+    full_width = FALSE
+  )
+
+# remove intermediate dataframes
+rm(avg_df_ho, avg_df_g, avg_df_dg, avg_df_n, avg_df_v, avg_df_w, avg_df_c, combined_avg_df)
+```
+
+---
+
+# Graphical results
+
+Based on the simulations performed, the following graphical results have been generated to compare the different silvicultural alternatives considered.
+
+## Comparison of silvicultural alternatives: basic variables
+
+<!-- # TODO: include general description -->
+
+```{r basic variables graphs}
+# density
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "N", 
+               title = "Density dynamic", 
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Density (trees/ha)")
+
+# stand basal area
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "G", 
+               title = "Basal area dynamic", 
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Basal area (m²/ha)")
+
+# average tree basal area
+plots$g_tree <- plots$G / plots$N  # m²
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "g_tree", 
+               title = "Average tree basal area dynamic", 
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Basal area (m²)")
+
+# dominant height
+graph_selector(df = plots, projection_time = projection_time, lang = lang, 
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "Ho", 
+               title = "Dominant height dynamic", 
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Dominant height (m)")
+```
+
+
+## Comparison of silvicultural alternatives: wood volume
+
+<!-- # TODO: include general description -->
+
+*Note: Two lines are shown for each scenario. Solid lines represent cumulative values (standing trees + dead trees + trees removed by thinning), while dashed lines represent only the standing timber.*
+
+```{r volume graphs}
+# stand volume
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+               save = save, output_path = output_path,
+               graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "V",
+               title = "Volume over bark dynamic",
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Volume (m³/ha)")
+
+# average tree volume
+plots$v_tree <- plots$V / plots$N * 1000
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "v_tree",
+               title = "Average tree volume over bark dynamic",
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Volume (dm³)")
+```
+
+## Comparison of silvicultural alternatives: biomass and carbon
+
+<!-- # TODO: include general description -->
+
+*Note: The biomass shown refers to the above-ground part (trunk, branches, and leaves), excluding roots, while the sequestered carbon refers to the whole tree.*
+
+*Note: Two lines are shown for each scenario. Solid lines represent cumulative values (standing trees + dead trees + trees removed by thinning), while dashed lines represent only the standing timber.*
+
+```{r biomass and carbon graphs}
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+              save = save, output_path = output_path,
+              graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "WA",
+              title = "Aerial biomass dynamic",
+              subtitle = graph_subtitle,
+              x = "Stand age (years)", y = "Biomass (t/ha)")
+
+# average tree biomass
+plots$wt_tree <- plots$WT / plots$N
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+               save = save, output_path = output_path,
+               graph_type = "standing", x_axis_var = "T", y_axis_var = "wt_tree",
+               title = "Average tree aerial biomass dynamic",
+               subtitle = graph_subtitle,
+               x = "Stand age (years)", y = "Biomass (t)")
+
+graph_selector(df = plots, projection_time = projection_time, lang = lang,
+              save = save, output_path = output_path,
+              graph_type = "standing + accumulated", x_axis_var = "T", y_axis_var = "Carbon_total",
+              title = "Total carbon dynamic",
+              subtitle = graph_subtitle,
+              x = "Stand age (years)", y = "Biomass (t/ha)")
+```
+
+
+<!-- ## Silvicultural alternatives comparison: other ecosystem services -->
+
+<!-- # TODO: include general description -->
+
+<!-- TODO: copy and paste a code section here to generate additional graphs if needed -->

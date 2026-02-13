@@ -20,6 +20,9 @@ Este repositorio está enfocado en conocer qué resultados se obtienen de las si
 ## :scroll: Contenido
 
 * :computer: **analisis_resultados**: carpeta que contiene un script de R preparado para poder hacer algunos gráficos que muestran la evolución de la masa forestal y una comparación de la cantidad de madera acumulada (incluida la extraída) bajo distintos escenarios selvícolas. Puedes visualizar los resultados de este análisis en el archivo *.html* que se encuentra en la misma carpeta.
+  * :bulb: Si ya tienes conocimientos más avanzados en R y buscas hacer un informe más profesional, entonces utiliza esta plantilla para informes:
+    - :es: [plantilla para informes en español](./informes_simulaciones/plantilla_informe_espanol/)
+    - 🇬🇧 [English report template](./informes_simulaciones/report_template_english/)
 * :books: **informes_simulaciones**: ejemplos de informes gráficos realizados para simulaciones hechas con SIMANFOR.
 * :bar_chart: **Ppinaster-Del_Rio_2006**: resultados obtenidos para las 5 calidades de estación de *Pinus pinaster* de Castilla y León propuestas por [Del Río et al., 2006](https://www.researchgate.net/publication/265520003_Manual_de_gestion_para_masas_procedentes_de_repoblacion_de_Pinus_pinaster_Ait_Pinus_sylvestris_L_y_Pinus_nigra_Arn_en_Castilla_y_Leon)
 * :bar_chart: **Ps-no_maderables**: resultados obtenidos para parcelas de *Pinus sylvestris* de Cataluña obtenidas del [Inventario Forestal Nacional](https://www.miteco.gob.es/es/biodiversidad/temas/inventarios-nacionales/inventario-forestal-nacional/default.aspx).
@@ -100,7 +103,8 @@ Además, puedes citar los modelos de utilizados y los artículos donde han sido 
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-00CCBB?logo=researchgate&logoColor=white)](https://www.researchgate.net/profile/Felipe-Bravo-11) 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://www.linkedin.com/in/felipebravooviedo) 
 [![X](https://img.shields.io/badge/X-1DA1F2?logo=x&logoColor=white)](https://twitter.com/fbravo_SFM) 
-[<img src="https://media.licdn.com/dms/image/v2/D4D0BAQFazHOlOJO50A/company-logo_200_200/company-logo_200_200/0/1692170343519/universidad_de_valladolid_logo?e=1747872000&v=beta&t=1mTS-xC7h3L_DQATdt6hpqjWGgW_Am3MXKnjYwcOVZs" alt="Description" width="22">](https://portaldelaciencia.uva.es/investigadores/181874/detalle)
+[<img src="https://raw.githubusercontent.com/aitorvv/aitorvv/main/logos/uva.jpg" alt="UVa" width="22">](https://portaldelaciencia.uva.es/investigadores/181874/detalle)
+
 
 #### Angel Cristóbal Ordóñez Alonso:
 
@@ -110,7 +114,7 @@ Además, puedes citar los modelos de utilizados y los artículos donde han sido 
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-00CCBB?logo=researchgate&logoColor=white)](https://www.researchgate.net/profile/Cristobal-Ordonez-Alonso) 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://www.linkedin.com/in/cristobal-ordonez-b6a97244/) 
 [![X](https://img.shields.io/badge/X-1DA1F2?logo=x&logoColor=white)](https://twitter.com/OrdonezAC) 
-[<img src="https://media.licdn.com/dms/image/v2/D4D0BAQFazHOlOJO50A/company-logo_200_200/company-logo_200_200/0/1692170343519/universidad_de_valladolid_logo?e=1747872000&v=beta&t=1mTS-xC7h3L_DQATdt6hpqjWGgW_Am3MXKnjYwcOVZs" alt="Description" width="22">](https://portaldelaciencia.uva.es/investigadores/181312/detalle)
+[<img src="https://raw.githubusercontent.com/aitorvv/aitorvv/main/logos/uva.jpg" alt="UVa" width="22">](https://portaldelaciencia.uva.es/investigadores/181312/detalle)
 
 #### Aitor Vázquez Veloso:
 
@@ -122,7 +126,7 @@ Además, puedes citar los modelos de utilizados y los artículos donde han sido 
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-00CCBB?logo=researchgate&logoColor=white)](https://www.researchgate.net/profile/Aitor_Vazquez_Veloso)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://linkedin.com/in/aitorvazquezveloso/)
 [![X](https://img.shields.io/badge/X-1DA1F2?logo=x&logoColor=white)](https://twitter.com/aitorvv)
-[<img src="https://media.licdn.com/dms/image/v2/D4D0BAQFazHOlOJO50A/company-logo_200_200/company-logo_200_200/0/1692170343519/universidad_de_valladolid_logo?e=1747872000&v=beta&t=1mTS-xC7h3L_DQATdt6hpqjWGgW_Am3MXKnjYwcOVZs" alt="Description" width="22">](https://portaldelaciencia.uva.es/investigadores/178830/detalle)
+[<img src="https://raw.githubusercontent.com/aitorvv/aitorvv/main/logos/uva.jpg" alt="UVa" width="22">](https://portaldelaciencia.uva.es/investigadores/178830/detalle)
 
 
 #### Spyridon Michalakopoulos
@@ -133,7 +137,7 @@ Además, puedes citar los modelos de utilizados y los artículos donde han sido 
 [![ResearchGate](https://img.shields.io/badge/ResearchGate-00CCBB?logo=researchgate&logoColor=white)](https://www.researchgate.net/profile/Spiros-Michalakopoulos) 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://www.linkedin.com/in/spiros-michalakopoulos/?originalSubdomain=es) 
 [![X](https://img.shields.io/badge/X-1DA1F2?logo=x&logoColor=white)](https://twitter.com/spirosmichalak) 
-[<img src="https://media.licdn.com/dms/image/v2/D4D0BAQFazHOlOJO50A/company-logo_200_200/company-logo_200_200/0/1692170343519/universidad_de_valladolid_logo?e=1747872000&v=beta&t=1mTS-xC7h3L_DQATdt6hpqjWGgW_Am3MXKnjYwcOVZs" alt="Description" width="22">](https://portaldelaciencia.uva.es/investigadores/988349/detalle)
+[<img src="https://raw.githubusercontent.com/aitorvv/aitorvv/main/logos/uva.jpg" alt="UVa" width="22">](https://portaldelaciencia.uva.es/investigadores/988349/detalle)
 
 
 ---
