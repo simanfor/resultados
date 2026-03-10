@@ -54,13 +54,13 @@ accumulated_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis
     geom_line(linetype = "solid") +
     labs(title = title, subtitle = subtitle, x = x, y = y, shape = action_name) +
     theme_minimal() +
-    theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
-          axis.title = element_text(size = 12),
+    theme(plot.title = element_text(size = 12, hjust = 0.5, face = "bold"),
+          plot.subtitle = element_text(size = 10, hjust = 0.5, face = "italic"),
+          axis.title = element_text(size = 10),
           plot.background = element_rect(fill = "white", color = NA),
           panel.background = element_rect(fill = "white", color = NA),
-          legend.title = element_text(size = 12),
-          legend.text = element_text(size = 12)) +
+          legend.title = element_text(size = 10),
+          legend.text = element_text(size = 10)) +
     scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) +
     scale_shape_manual(values = shape_values)   
   
@@ -133,13 +133,13 @@ accumulated_standing_graph <- function(df, y_axis_var, projection_time, scnr_nam
     geom_point(aes(y = y_axis_var, shape = action), size = 2.5) +
     labs(title = title, subtitle = subtitle, x = x, y = y, caption = caption, shape = action_name) +
     theme_minimal() +
-    theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
-          axis.title = element_text(size = 12),
+    theme(plot.title = element_text(size = 12, hjust = 0.5, face = "bold"),
+          plot.subtitle = element_text(size = 10, hjust = 0.5, face = "italic"),
+          axis.title = element_text(size = 10),
           plot.background = element_rect(fill = "white", color = NA),
           panel.background = element_rect(fill = "white", color = NA),
-          legend.title = element_text(size = 12),
-          legend.text = element_text(size = 12)) +
+          legend.title = element_text(size = 10),
+          legend.text = element_text(size = 10)) +
     scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) +
     scale_shape_manual(values = shape_values)   
   
@@ -436,8 +436,8 @@ lang_switcher <- function(lang, text){
     scnr_name = c(es = "Nombre_archivo_escenario", en = "Scenario_file_name"),
     scnr_legend = c(es = "Escenario", en = "Scenario"),
     caption = c(
-      es = "La línea sólida representa la producción total (en pie + extraído); la línea discontinua representa el valor en pie",
-      en = "The solid line represents the total production (standing + extracted); the dashed line represents the standing value"
+      es = "línea sólida = en pie + extraído; línea discontinua = en pie",
+      en = "solid line = standing + extracted; dashed line = standing"
     ),
     x_axis_error = c(es = "El eje X debe ser numérico", en = "The X axis must be numeric"),
     y_axis_error = c(es = "El eje Y debe ser numérico", en = "The Y axis must be numeric"),
@@ -495,7 +495,7 @@ load_plot_data <- function(simulations_path, lang = "es"){
     }
   }
   
-  plots <- plots[!plots[[action_name]] == "Carga Inicial", ] 
+  plots <- plots[!plots[[action_name]] %in% c("Carga Inicial", "Initial load"), ] 
   
   rm(directory, folder, files_list, doc, plot_data, sheet_name)
   
@@ -579,13 +579,13 @@ standing_graph <- function(df, y_axis_var, projection_time, scnr_name, x_axis_va
     geom_line(linetype = "solid") +
     labs(title = title, subtitle = subtitle, x = x, y = y, shape = action_name) +
     theme_minimal() +
-    theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
-          plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
-          axis.title = element_text(size = 12),
+    theme(plot.title = element_text(size = 12, hjust = 0.5, face = "bold"),
+          plot.subtitle = element_text(size = 10, hjust = 0.5, face = "italic"),
+          axis.title = element_text(size = 10),
           plot.background = element_rect(fill = "white", color = NA),
           panel.background = element_rect(fill = "white", color = NA),
-          legend.title = element_text(size = 12),
-          legend.text = element_text(size = 12)) +
+          legend.title = element_text(size = 10),
+          legend.text = element_text(size = 10)) +
     scale_color_discrete(scnr, type = viridis::viridis(length(unique(avg_df$scnr_name)))) +
     scale_shape_manual(values = shape_values)   
   
