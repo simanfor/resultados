@@ -21,8 +21,8 @@ This repository is focused on understanding the results obtained from simulation
 
 * :computer: **analisis_resultados**: Folder containing an R script prepared to create some graphs showing the evolution of the forest stand and a comparison of the accumulated wood volume (including harvested) under different silvicultural scenarios.
   * :bulb: If you already have more advanced knowledge of R and are looking to create a more professional report, then use this report template:
-    - :es: [Spanish report template](./informes_simulaciones/plantilla_informe_espanol/)
-    - 🇬🇧 [English report template](./informes_simulaciones/report_template_english/)
+    - :es: [Spanish report template](../informes_simulaciones/plantilla_informe_espanol/)
+    - 🇬🇧 [English report template](../informes_simulaciones/report_template_english/)
 * :books: **informes_simulaciones**: examples of graphical reports generated from simulations performed with SIMANFOR.
 * :bar_chart: **Ppinaster-Del_Rio_2006**: Results obtained for the 5 site qualities of *Pinus pinaster* in Castilla y León proposed by [Del Río et al., 2006](https://www.researchgate.net/publication/265520003_Manual_de_gestion_para_masas_procedentes_de_repoblacion_de_Pinus_pinaster_Ait_Pinus_sylvestris_L_y_Pinus_nigra_Arn_en_Castilla_y_Leon)
 * :bar_chart: **Ps-no_maderables**: Results obtained for *Pinus sylvestris* plots in Catalonia obtained from the [National Forest Inventory](https://www.miteco.gob.es/es/biodiversidad/temas/inventarios-nacionales/inventario-forestal-nacional/default.aspx).
@@ -153,9 +153,9 @@ In addition, you can cite the models used and the articles where the original eq
 
 ## ℹ License 
 
-[![MIT License](https://img.shields.io/badge/license-MIT-red.svg)](./LICENSE)
+[![MIT License](https://img.shields.io/badge/license-MIT-red.svg)](../LICENSE)
 
-The content of this repository is under the [MIT license](./LICENSE).
+The content of this repository is under the [MIT license](../LICENSE).
 
 ---
 

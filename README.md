@@ -77,8 +77,7 @@ Este repositorio está enfocado en conocer qué resultados se obtienen de las si
 * :books: [Repositorio con simulaciones del modelo IBERO](https://github.com/aitorvv/IBERO_evaluation_and_validation) para el artículo científico titulado [**Evaluation and validation of forest models: insight from Mediterranean and Scots pine models in Spain**](https://www.sciencedirect.com/science/article/pii/S1574954123002753)
   
 :floppy_disk: :hammer: Repositorios asociados a proyectos:
-* :bar_chart: [Repositorio con simulaciones para masas mixtas](https://github.com/iuFOR-QuantitativeForestry/COMFOR.NFI) del proyecto [COMFOR-SUDOE]
-(https://www.comfor-sudoe.eu/es/)
+* :bar_chart: [Repositorio con simulaciones para masas mixtas](https://github.com/iuFOR-QuantitativeForestry/COMFOR.NFI) del proyecto [COMFOR-SUDOE](https://www.comfor-sudoe.eu/es/)
 * :bar_chart: [Repositorio con simulaciones del Inventario Forestal Nacional](https://github.com/iuFOR-QuantitativeForestry/CrossForest-simulations) del proyecto [CrossForest](https://crossforest.eu/)
 * :bar_chart: [Repositorio con simulaciones de masas irregulares de rebollo (*Quercus pyrenaica*)](https://github.com/aitorvv/LifeRebollo_simulations) del proyecto [LifeRebollo](https://liferebollo.es/)
 ---
@@ -89,7 +88,7 @@ El uso de SIMANFOR debe citarse de la siguiente forma:
 
 Bravo, F., Ordóñez, C., Vázquez-Veloso, A., & Michalakopoulos, S. (2025). SIMANFOR cloud Decision Support System: Structure, content, and applications. Ecological Modelling, 499, 110912. https://doi.org/10.1016/j.ecolmodel.2024.110912
 
-Además, puedes citar los modelos de utilizados y los artículos donde han sido publicadas las ecuaciones originales, echa un vistazo a la [ficha](https://github.com/simanfor/modelos) del modelo correspondiente para más detalles.
+Además, puedes citar los modelos utilizados y los artículos donde han sido publicadas las ecuaciones originales, echa un vistazo a la [ficha](https://github.com/simanfor/modelos) del modelo correspondiente para más detalles.
 
 ---
 
